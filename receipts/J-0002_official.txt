@@ -1,0 +1,32 @@
+====================================================
+             FLUX REPAIR CO. ATELIER
+           OFFICIAL REPAIR INVOICE
+      118 Beacon Works, Unit 3 • (555) 019-3350
+====================================================
+JOB ORDER: J-0002             DATE: 2026-10-15 22:08
+----------------------------------------------------
+CUSTOMER: Kelly Laurence
+CONTACT:  0917-123-4567
+DEVICE:   Laptop (asdad adadsa)
+SERIAL:   232
+====================================================
+ITEMIZED SERVICES & LABOR                     AMOUNT
+----------------------------------------------------
+  Diagnostic                                    ₱0.00
+  Keyboard Replacement                      ₱1,200.00
+----------------------------------------------------
+SUBTOTAL (SERVICES):                       ₱1,200.00
+====================================================
+TOTAL REPAIR CHARGES:                      ₱1,200.00
+PAYMENTS RECEIVED:                           ₱500.00
+----------------------------------------------------
+OUTSTANDING BALANCE:                         ₱700.00
+====================================================
+PAYMENT HISTORY:
+  [2026-10-15 22:08] Card                     ₱500.00
+----------------------------------------------------
+WARRANTY & TERMS:
+• 90-Day parts and workmanship warranty on replaced ICs.
+• Physical impact and liquid re-ingress void warranty.
+• Thank you for supporting honest component repair!
+====================================================

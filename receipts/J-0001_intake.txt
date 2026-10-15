@@ -1,0 +1,27 @@
+================================================
+           FLUX REPAIR CO. ATELIER
+       SURGICAL ELECTRONICS DIAGNOSTICS
+================================================
+JOB TICKET: J-0001        DATE: 2026-10-15 22:18
+------------------------------------------------
+CUSTOMER: Pedro Penduko
+CONTACT:  0922-555-1111
+------------------------------------------------
+DEVICE:    Laptop - Dell XPS 15
+SERIAL NO: SN-998877
+CONDITION: Normal wear
+PRIORITY:  Urgent
+ACCESSORIES: Charger, Sleeve
+------------------------------------------------
+REPORTED ISSUE:
+  Blue screen and thermal throttling
+------------------------------------------------
+INITIAL SERVICES AT INTAKE:
+  • OS Reinstallation                     ₱500.00
+  • Cleaning / Thermal Paste              ₱650.00
+------------------------------------------------
+ESTIMATED TOTAL:                       ₱1,150.00
+================================================
+Notice: Devices unclaimed after 60 days are subject
+to workshop disposal rules. Thank you for your trust.
+================================================

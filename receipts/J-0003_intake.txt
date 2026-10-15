@@ -1,0 +1,27 @@
+================================================
+           FLUX REPAIR CO. ATELIER
+       SURGICAL ELECTRONICS DIAGNOSTICS
+================================================
+JOB TICKET: J-0003        DATE: 2026-10-15 22:10
+------------------------------------------------
+CUSTOMER: Kelly Laurence
+CONTACT:  0917-123-4567
+------------------------------------------------
+DEVICE:    Laptop - adsa aada
+SERIAL NO: 232
+CONDITION: Normal cosmetic wear, no major chassis cracks
+PRIORITY:  Normal
+ACCESSORIES: Sleeve / Bag
+------------------------------------------------
+REPORTED ISSUE:
+  asda
+------------------------------------------------
+INITIAL SERVICES AT INTAKE:
+  • Diagnostic                              ₱0.00
+  • OS Reinstallation                     ₱500.00
+------------------------------------------------
+ESTIMATED TOTAL:                         ₱500.00
+================================================
+Notice: Devices unclaimed after 60 days are subject
+to workshop disposal rules. Thank you for your trust.
+================================================

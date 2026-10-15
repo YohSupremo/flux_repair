@@ -1,0 +1,10 @@
+service_id,name,description,price
+S-001,Diagnostic,Initial hardware fault diagnosis and board-level inspection,0.00
+S-002,OS Reinstallation,Clean OS install with latest drivers and baseline updates,500.00
+S-003,Virus Removal,"Malware, ransomware, and spyware scrubbing with registry clean",600.00
+S-004,Screen Replacement,Precision LCD/OLED panel replacement with color calibration,2500.00
+S-005,Battery Replacement,Original-spec cell installation with health & load verification,1800.00
+S-006,Keyboard Replacement,Chassis-level keyboard replacement with backlight testing,1200.00
+S-007,Hardware Upgrade (RAM/SSD),High-speed NVMe or RAM installation and thermal benchmarking,800.00
+S-008,Data Backup,Bit-for-bit drive clone or selective archive to secure storage,700.00
+S-009,Cleaning / Thermal Paste,Ultrasonic dust removal and liquid metal / high-viscosity paste rework,650.00

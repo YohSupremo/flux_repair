@@ -1,0 +1,5 @@
+job_id,customer_id,technician_id,received_by,device_type,brand,model,serial_no,problem,device_condition,priority,date_received,est_completion,diagnosis,notes,cancel_reason
+J-0001,C-002,,U-003,Laptop,Branded,adasdad,23213,adasda,"Normal cosmetic wear, no major chassis cracks",Normal,2026-10-15 22:02,,,,
+J-0002,C-002,,U-003,Laptop,asdad,adadsa,232,asdad,"Normal cosmetic wear, no major chassis cracks",Normal,2026-10-15 22:08,,,,
+J-0003,C-002,,U-003,Laptop,adsa,aada,232,asda,"Normal cosmetic wear, no major chassis cracks",Normal,2026-10-15 22:10,,,,
+J-0004,C-002,,U-003,Laptop,asdsad,sadas,232,asdsada,"Normal cosmetic wear, no major chassis cracks",Normal,2026-10-15 22:13,,,,

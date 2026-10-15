@@ -1,0 +1,5 @@
+payment_id,job_id,amount,method,payment_date,received_by
+PAY-0001,J-0003,250.00,Cash,2026-10-15 22:11,U-001
+PAY-0002,J-0003,250.00,Cash,2026-10-15 22:11,U-001
+PAY-0003,J-0003,500.00,Cash,2026-10-15 22:12,U-001
+PAY-0004,J-0004,500.00,Cash,2026-10-15 22:13,U-001

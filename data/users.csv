@@ -1,0 +1,4 @@
+user_id,username,password,role,full_name
+U-001,admin,admin123,Admin,Default Administrator
+U-002,tech1,pass123,Technician,Tech Juan
+U-003,Kelly,Kelly123.,Customer,Kelly Laurence

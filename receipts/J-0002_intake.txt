@@ -1,0 +1,25 @@
+================================================
+           FLUX REPAIR CO. ATELIER
+       SURGICAL ELECTRONICS DIAGNOSTICS
+================================================
+JOB TICKET: J-0002        DATE: 2026-10-15 22:18
+------------------------------------------------
+CUSTOMER: Pedro Penduko
+CONTACT:  0918-222-3333
+------------------------------------------------
+DEVICE:    Laptop - Dell XPS 15
+SERIAL NO: DL-PEDRO-02
+CONDITION: Normal wear
+PRIORITY:  Urgent
+------------------------------------------------
+REPORTED ISSUE:
+  Battery replacement
+------------------------------------------------
+INITIAL SERVICES AT INTAKE:
+  • Diagnostic & Bench Assessment
+------------------------------------------------
+ESTIMATED TOTAL:                           ₱0.00
+================================================
+Notice: Devices unclaimed after 60 days are subject
+to workshop disposal rules. Thank you for your trust.
+================================================
