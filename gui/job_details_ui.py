@@ -37,7 +37,7 @@ class JobDetailsModal(tk.Toplevel):
         self.acting_user = acting_user
         self.on_refresh_callback = on_refresh_callback
 
-        self.title(f"Repair Dossier — Job {job_id}")
+        self.title(f"Repair Dossier: Job {job_id}")
         self.geometry("1180x680")
         self.minsize(980, 500)
         self.configure(bg=BG)
@@ -112,7 +112,7 @@ class JobDetailsModal(tk.Toplevel):
         self.status_pill.pack(side="left")
 
         # Subtitle
-        dev_desc = f"{self.job['device_type']} • {self.job['brand']} {self.job['model']} (S/N: {self.job['serial_no']})"
+        dev_desc = f"{self.job['device_type']}, {self.job['brand']} {self.job['model']} (S/N: {self.job['serial_no']})"
         tk.Label(
             t_left,
             text=f"Client: {self.cust.get('name', 'N/A')} ({self.cust.get('contact_no', 'N/A')})   |   Device: {dev_desc}",
@@ -215,13 +215,13 @@ class JobDetailsModal(tk.Toplevel):
 
             self.all_techs = get_technicians()
             self.tech_combo = ttk.Combobox(t_row, state="readonly", font=FONT_BODY, width=24)
-            tech_names = ["Unassigned"] + [f"{t['user_id']} — {t['full_name']}" for t in self.all_techs]
+            tech_names = ["Unassigned"] + [f"{t['user_id']}: {t['full_name']}" for t in self.all_techs]
             self.tech_combo['values'] = tech_names
 
             # Set current tech
             current_tech_str = "Unassigned"
             if self.tech:
-                current_tech_str = f"{self.tech['user_id']} — {self.tech['full_name']}"
+                current_tech_str = f"{self.tech['user_id']}: {self.tech['full_name']}"
             self.tech_combo.set(current_tech_str)
             self.tech_combo.pack(side="left", padx=(0, 8))
 
@@ -473,11 +473,11 @@ class JobDetailsModal(tk.Toplevel):
 
     def _show_intake_receipt(self):
         text = intake_receipt_text(self.job_id)
-        ReceiptViewerModal(self, f"Intake Ticket — {self.job_id}", text, f"{self.job_id}_intake.txt")
+        ReceiptViewerModal(self, f"Intake Ticket: {self.job_id}", text, f"{self.job_id}_intake.txt")
 
     def _show_official_receipt(self):
         text = official_receipt_text(self.job_id)
-        ReceiptViewerModal(self, f"Official Invoice — {self.job_id}", text, f"{self.job_id}_official.txt")
+        ReceiptViewerModal(self, f"Official Invoice: {self.job_id}", text, f"{self.job_id}_official.txt")
 
 
 class SelectServiceModal(tk.Toplevel):

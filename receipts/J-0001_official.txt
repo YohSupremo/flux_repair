@@ -3,7 +3,7 @@
            OFFICIAL REPAIR INVOICE
       118 Beacon Works, Unit 3 • (555) 019-3350
 ====================================================
-JOB ORDER: J-0001             DATE: 2026-10-15 22:26
+JOB ORDER: J-0001             DATE: 2026-10-18 21:31
 ----------------------------------------------------
 CUSTOMER: Pedro Penduko
 CONTACT:  0922-555-1111
@@ -23,8 +23,8 @@ PAYMENTS RECEIVED:                         ₱1,150.00
 OUTSTANDING BALANCE:                           ₱0.00
 ====================================================
 PAYMENT HISTORY:
-  [2026-10-15 22:26] Cash                     ₱500.00
-  [2026-10-15 22:26] Cash                     ₱650.00
+  [2026-10-18 21:31] Cash                     ₱500.00
+  [2026-10-18 21:31] Cash                     ₱650.00
 ----------------------------------------------------
 WARRANTY & TERMS:
 • 90-Day parts and workmanship warranty on replaced ICs.

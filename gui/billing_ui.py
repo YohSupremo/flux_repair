@@ -27,7 +27,7 @@ class PaymentModal(tk.Toplevel):
         self.on_payment_recorded = on_payment_recorded
         self.is_customer = (self.acting_user['role'] == 'Customer')
 
-        self.title(f"Payment & Downpayment — Job {job_id}")
+        self.title(f"Payment and Downpayment: Job {job_id}")
         self.geometry("560x620")
         self.minsize(480, 520)
         self.configure(bg=BG)
@@ -69,7 +69,7 @@ class PaymentModal(tk.Toplevel):
         dev_info = f"{self.details['job']['device_type']} ({self.details['job']['brand']} {self.details['job']['model']})"
         tk.Label(
             top_bar,
-            text=f"Customer: {cust_name}   •   Device: {dev_info}",
+            text=f"Customer: {cust_name}   |   Device: {dev_info}",
             font=FONT_SMALL,
             fg=DIM,
             bg=BG_PANEL
@@ -325,7 +325,7 @@ class PaymentModal(tk.Toplevel):
         receipt_text = official_receipt_text(self.job_id)
         ReceiptViewerModal(
             self.master,
-            f"Official Invoice — {self.job_id}",
+            f"Official Invoice: {self.job_id}",
             receipt_text,
             f"{self.job_id}_official.txt"
         )

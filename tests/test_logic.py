@@ -41,8 +41,12 @@ class TestLogic(unittest.TestCase):
         with self.assertRaises(ValidationError):
             login('admin', 'wrongpass')
 
-        # Add technician
-        tech = add_user('tech1', 'pass123', 'Technician', 'Tech Juan', self.admin)
+        # Password under 8 characters blocked
+        with self.assertRaises(ValidationError):
+            add_user('tech_short', 'short77', 'Technician', 'Short Pass', self.admin)
+
+        # Add technician with valid 8+ character password
+        tech = add_user('tech1', 'pass1234', 'Technician', 'Tech Juan', self.admin)
         self.assertEqual(tech['role'], 'Technician')
 
     def test_self_registration(self):
@@ -58,13 +62,25 @@ class TestLogic(unittest.TestCase):
         promoted = next(u for u in users if u['user_id'] == new_u['user_id'])
         self.assertEqual(promoted['role'], 'Staff')
 
+        # Password under 8 characters blocked during registration
+        with self.assertRaises(ValidationError):
+            register_user('cust_short', 'short12', 'short12', 'Short Guy')
+
         # Duplicate username blocked
         with self.assertRaises(ValidationError):
             register_user('cust_amy', 'otherpass', 'otherpass', 'Duplicate Amy')
 
         # Password mismatch blocked
         with self.assertRaises(ValidationError):
-            register_user('cust_bob', 'pass1', 'pass2', 'Bob Parr')
+            register_user('cust_bob', 'password1', 'password2', 'Bob Parr')
+
+        # Contact number with letters blocked
+        with self.assertRaises(ValidationError):
+            register_user('cust_phone_err', 'secret123', 'secret123', 'Phone Error', contact_no='0917-ABC-1234')
+
+        # Valid contact number accepted
+        cust_ok = register_user('cust_phone_ok', 'secret123', 'secret123', 'Phone OK', contact_no='0917-123-4567')
+        self.assertEqual(cust_ok['username'], 'cust_phone_ok')
 
     def test_customer_crud_and_protection(self):
         c = add_customer('Maria Santos', '0917-123-4567', 'maria@test.com', 'Makati City', self.admin)

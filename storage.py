@@ -57,6 +57,9 @@ def init_storage():
                 raise StorageError(f"Cannot create table {name}.csv: {e}")
         load_table(name)
 
+    # Reconcile counters with highest IDs found in loaded tables
+    sync_counters_with_db()
+
 
 def load_counters():
     """Load counters from counters.csv into memory."""
@@ -76,6 +79,25 @@ def load_counters():
         raise StorageError(f"Cannot load counters: {e}")
 
 
+def sync_counters_with_db():
+    """Ensure in-memory and on-disk counters match or exceed max IDs in tables."""
+    changed = False
+    for rows in db.values():
+        for r in rows:
+            for val in r.values():
+                val_str = str(val).strip()
+                if '-' in val_str:
+                    prefix, num_part = val_str.rsplit('-', 1)
+                    if num_part.isdigit():
+                        num = int(num_part)
+                        curr = int(counters.get(prefix, "0"))
+                        if num > curr:
+                            counters[prefix] = str(num)
+                            changed = True
+    if changed:
+        save_counters()
+
+
 def save_counters():
     """Atomically save counters to counters.csv."""
     cpath = counters_path()
@@ -93,8 +115,24 @@ def save_counters():
 
 def next_id(prefix, width=4):
     """Generate the next unique ID that is never reused (FR-55)."""
+    existing_nums = set()
+    for rows in db.values():
+        for r in rows:
+            for val in r.values():
+                val_str = str(val).strip()
+                if val_str.startswith(f"{prefix}-"):
+                    num_part = val_str[len(prefix)+1:]
+                    if num_part.isdigit():
+                        existing_nums.add(int(num_part))
+
     current = int(counters.get(prefix, "0"))
+    if existing_nums:
+        current = max(current, max(existing_nums))
+
     nxt = current + 1
+    while nxt in existing_nums:
+        nxt += 1
+
     counters[prefix] = str(nxt)
     save_counters()
     return f"{prefix}-{str(nxt).zfill(width)}"

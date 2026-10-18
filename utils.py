@@ -16,10 +16,15 @@ def require_text(value, label):
 
 
 def valid_contact(value, label="Contact number"):
-    """Validate phone/contact: digits, optional leading +, spaces, dashes."""
+    """Validate phone/contact: digits, optional leading +, spaces, dashes, parentheses."""
     text = require_text(value, label)
-    if not re.match(r"^\+?[\d\s\-]{7,20}$", text):
-        raise ValidationError(f"{label} must contain only digits, spaces, and hyphens (7-20 chars).")
+    if any(c.isalpha() for c in text):
+        raise ValidationError(f"{label} cannot contain letters.")
+    if not re.match(r"^\+?[\d\s\-\(\)]{7,25}$", text):
+        raise ValidationError(f"{label} must contain only numbers and valid symbols (+, -, ()).")
+    digits = re.sub(r"\D", "", text)
+    if len(digits) < 7 or len(digits) > 15:
+        raise ValidationError(f"{label} must contain between 7 and 15 digits.")
     return text
 
 

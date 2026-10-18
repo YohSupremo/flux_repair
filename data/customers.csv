@@ -1,3 +1,5 @@
 customer_id,name,contact_no,email,address
 C-001,Pedro Penduko,0922-555-1111,pedro@test.com,Quezon City
-C-002,Kelly Laurence,0917-123-4567,kelly@flux.local,Makati City
+C-002,Kelly Laurenc,0917-123-4567,kelly@flux.local,Makati City
+C-003,Test Shop User,0917-555-1234,shopuser@flux.local,"Unit 12, Tower B, Makati"
+C-004,Asa Roduta,3232322,asahi@gmail.com,"Block 3 Lot 18, Palayan Village, Taguig City, Metro Manila, 1630"

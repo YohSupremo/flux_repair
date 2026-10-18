@@ -27,7 +27,7 @@ class JobIntakeModal(tk.Toplevel):
         self.on_job_created_callback = on_job_created_callback
         self.is_customer = (self.acting_user['role'] == 'Customer')
 
-        win_title = "Request Device Repair — FLUX Atelier" if self.is_customer else "New Repair Job Intake — FLUX Atelier"
+        win_title = "Request Device Repair : FLUX Atelier" if self.is_customer else "New Repair Job Intake : FLUX Atelier"
         self.title(win_title)
         self.geometry("780x820")
         self.minsize(680, 720)
@@ -135,7 +135,7 @@ class JobIntakeModal(tk.Toplevel):
         else:
             tk.Label(c_box, text="SELECT CUSTOMER *", font=FONT_SMALL_BOLD, fg=MUTED, bg=BG_PANEL).pack(anchor="w", pady=(0, 4))
             self.cust_combo = ttk.Combobox(c_box, state="readonly", font=FONT_BODY)
-            c_display = [f"{c['customer_id']} — {c['name']} ({c['contact_no']})" for c in self.customers_list]
+            c_display = [f"{c['customer_id']}: {c['name']} ({c['contact_no']})" for c in self.customers_list]
             self.cust_combo['values'] = c_display
             if c_display:
                 self.cust_combo.current(0)
@@ -287,7 +287,7 @@ class JobIntakeModal(tk.Toplevel):
         self.srv_listbox.configure(yscrollcommand=srv_vsb.set)
 
         for s in self.services_list:
-            self.srv_listbox.insert("end", f"[{s['service_id']}] {s['name']} — {money(s['price'])}")
+            self.srv_listbox.insert("end", f"[{s['service_id']}] {s['name']}: {money(s['price'])}")
 
         self.srv_listbox.pack(side="left", fill="both", expand=True)
         srv_vsb.pack(side="right", fill="y")
@@ -337,7 +337,7 @@ class JobIntakeModal(tk.Toplevel):
             tk.Label(s6, text="6. BENCH TECHNICIAN ASSIGNMENT (OPTIONAL)", font=FONT_SMALL_BOLD, fg=EMERALD, bg=BG_PANEL).pack(anchor="w", pady=(0, 6))
 
             self.tech_combo = ttk.Combobox(s6, state="readonly", font=FONT_BODY)
-            tech_opts = ["Unassigned"] + [f"{t['user_id']} — {t['full_name']}" for t in self.technicians_list]
+            tech_opts = ["Unassigned"] + [f"{t['user_id']}: {t['full_name']}" for t in self.technicians_list]
             self.tech_combo['values'] = tech_opts
             self.tech_combo.current(0)
             self.tech_combo.pack(fill="x")
@@ -447,7 +447,7 @@ class JobIntakeModal(tk.Toplevel):
         receipt_text = intake_receipt_text(jid)
         ReceiptViewerModal(
             self.master,
-            f"Intake Ticket — {jid}",
+            f"Intake Ticket: {jid}",
             receipt_text,
             f"{jid}_intake.txt"
         )

@@ -15,16 +15,17 @@ class App(tk.Tk):
     """
     def __init__(self):
         super().__init__()
+        self.title("FLUX Repair Co.")
 
         # Adaptively size and center on screen
         screen_w = self.winfo_screenwidth()
         screen_h = self.winfo_screenheight()
-        w = min(1180, max(940, screen_w - 60))
-        h = min(680, max(520, screen_h - 90))
-        x = max(10, (screen_w - w) // 2)
-        y = max(10, (screen_h - h) // 2)
+        w = min(1380, max(1240, screen_w - 40))
+        h = min(780, max(600, screen_h - 70))
+        x = max(0, (screen_w - w) // 2)
+        y = max(0, (screen_h - h) // 2)
         self.geometry(f"{w}x{h}+{x}+{y}")
-        self.minsize(940, 520)
+        self.minsize(1180, 560)
         self.configure(bg=BG)
 
         # Apply custom Cleanroom Atelier ttk styles
@@ -38,6 +39,7 @@ class App(tk.Tk):
 
     def show_login(self):
         """Display the authentication screen (FR-01)."""
+        self.title("FLUX Repair Co.")
         self.current_user = None
         if self.current_frame:
             self.current_frame.destroy()
@@ -47,6 +49,7 @@ class App(tk.Tk):
 
     def on_login_success(self, user):
         """Transition to role-based main menu upon successful authentication (FR-03)."""
+        self.title("FLUX Repair Co.")
         self.current_user = user
         if self.current_frame:
             self.current_frame.destroy()

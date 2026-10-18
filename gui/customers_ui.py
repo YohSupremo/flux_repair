@@ -182,6 +182,8 @@ class CustomerFormModal(tk.Toplevel):
         f1.pack(fill="x", pady=(0, 10))
 
         f2, self.contact_entry = labeled_field(card, "CONTACT NUMBER * (e.g. 0917-123-4567)", widget_class=tk.Entry)
+        vcmd = (self.register(lambda act, p, char: not (act == '1' and any(c.isalpha() for c in char))), '%d', '%P', '%S')
+        self.contact_entry.configure(validate="key", validatecommand=vcmd)
         f2.pack(fill="x", pady=(0, 10))
 
         f3, self.email_entry = labeled_field(card, "EMAIL ADDRESS *", widget_class=tk.Entry)
@@ -231,7 +233,7 @@ class CustomerHistoryModal(tk.Toplevel):
         self.customer = customer
         self.on_open_job_callback = on_open_job_callback
 
-        self.title(f"Repair History — {customer['name']} ({customer['customer_id']})")
+        self.title(f"Repair History: {customer['name']} ({customer['customer_id']})")
         self.geometry("720x460")
         self.configure(bg=BG)
 
@@ -254,7 +256,7 @@ class CustomerHistoryModal(tk.Toplevel):
 
         tk.Label(
             top_bar,
-            text=f"Customer ID: {self.customer['customer_id']}   •   Contact: {self.customer['contact_no']}",
+            text=f"Customer ID: {self.customer['customer_id']}   |   Contact: {self.customer['contact_no']}",
             font=FONT_SMALL,
             fg=DIM,
             bg=BG_PANEL

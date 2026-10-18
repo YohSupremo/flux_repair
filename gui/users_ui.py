@@ -132,7 +132,7 @@ class UserFormModal(tk.Toplevel):
         f1, self.uname_entry = labeled_field(card, "USERNAME * (3-20 characters, no spaces)", widget_class=tk.Entry)
         f1.pack(fill="x", pady=(0, 10))
 
-        pwd_label = "PASSWORD *" if not self.user else "NEW PASSWORD (leave blank to keep current)"
+        pwd_label = "PASSWORD * (min 8 characters)" if not self.user else "NEW PASSWORD (min 8 chars, leave blank to keep current)"
         f2, self.pwd_entry = labeled_field(card, pwd_label, widget_class=tk.Entry, show="*")
         f2.pack(fill="x", pady=(0, 10))
 

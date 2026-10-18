@@ -293,12 +293,12 @@ class CircuitCareLandingApp(tk.Tk):
         # Responsive comfortable desktop window dimensions (prevents overflow on standard monitors)
         scr_w = self.winfo_screenwidth()
         scr_h = self.winfo_screenheight()
-        app_w = min(1200, max(960, scr_w - 80))
-        app_h = min(720, max(560, scr_h - 120))
+        app_w = min(1380, max(1240, scr_w - 40))
+        app_h = min(780, max(600, scr_h - 70))
         pos_x = max(0, (scr_w - app_w) // 2)
         pos_y = max(0, (scr_h - app_h) // 2 - 20)
         self.geometry(f"{app_w}x{app_h}+{pos_x}+{pos_y}")
-        self.minsize(960, 540)
+        self.minsize(1180, 560)
         self.configure(bg=BG)
 
         # State

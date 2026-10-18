@@ -30,9 +30,9 @@ BLUE = "#2563eb"            # Info / Under repair blue
 BLUE_LIGHT = "#eff6ff"
 BLUE_BORDER = "#bfdbfe"
 
-PURPLE = "#7c3aed"          # Waiting for parts purple
-PURPLE_LIGHT = "#f5f3ff"
-PURPLE_BORDER = "#ddd6fe"
+PURPLE = "#475569"          # Waiting for parts neutral slate (non-banned hue)
+PURPLE_LIGHT = "#f1f5f9"
+PURPLE_BORDER = "#cbd5e1"
 
 # Sidebar Dark Palette
 SIDEBAR_BG = "#0f172a"      # Midnight obsidian slate
