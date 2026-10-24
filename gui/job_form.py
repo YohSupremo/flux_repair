@@ -21,10 +21,11 @@ class JobIntakeModal(tk.Toplevel):
     Job Order Intake Window (FR-13 - FR-20, FR-23, FR-24).
     Handles customer selection, hardware attributes, accessory logging, and initial service scoping.
     """
-    def __init__(self, parent, acting_user, on_job_created_callback=None):
+    def __init__(self, parent, acting_user, on_job_created_callback=None, preselected_service_id=None):
         super().__init__(parent)
         self.acting_user = acting_user
         self.on_job_created_callback = on_job_created_callback
+        self.preselected_service_id = preselected_service_id
         self.is_customer = (self.acting_user['role'] == 'Customer')
 
         win_title = "Request Device Repair : FLUX Atelier" if self.is_customer else "New Repair Job Intake : FLUX Atelier"
@@ -293,7 +294,14 @@ class JobIntakeModal(tk.Toplevel):
         srv_vsb.pack(side="right", fill="y")
 
         if self.services_list:
-            self.srv_listbox.select_set(0)
+            sel_idx = 0
+            if getattr(self, "preselected_service_id", None):
+                for idx, s in enumerate(self.services_list):
+                    if s['service_id'] == self.preselected_service_id:
+                        sel_idx = idx
+                        break
+            self.srv_listbox.select_set(sel_idx)
+            self.srv_listbox.see(sel_idx)
 
         # Section 6: Payment Option & Downpayment (Customer) or Technician Assignment (Staff)
         if self.is_customer:

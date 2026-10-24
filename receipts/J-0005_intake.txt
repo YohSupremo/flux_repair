@@ -1,0 +1,28 @@
+================================================
+           FLUX REPAIR CO. ATELIER
+       SURGICAL ELECTRONICS DIAGNOSTICS
+================================================
+JOB TICKET: J-0005        DATE: 2026-10-19 15:34
+------------------------------------------------
+CUSTOMER: Test Shop User
+CONTACT:  0917-555-1234
+------------------------------------------------
+DEVICE:    Laptop - Pineapple Mikmik
+SERIAL NO: 6967
+CONDITION: Normal cosmetic wear, no major chassis cracks
+PRIORITY:  Urgent
+ACCESSORIES: OEM Charger / Power Adapter, Sleeve / Bag, Power Cable, External Mouse / Dongle, USB / Storage Media, Original Box
+------------------------------------------------
+REPORTED ISSUE:
+  dili man magbukas
+------------------------------------------------
+INITIAL SERVICES AT INTAKE:
+  • Diagnostic                              ₱0.00
+  • Battery Replacement                 ₱1,800.00
+  • Keyboard Replacement                ₱1,200.00
+------------------------------------------------
+ESTIMATED TOTAL:                       ₱3,000.00
+================================================
+Notice: Devices unclaimed after 60 days are subject
+to workshop disposal rules. Thank you for your trust.
+================================================

@@ -531,8 +531,9 @@ class MainMenuView(tk.Frame):
             "Sunday: Closed"
         )
 
-    def _open_new_job_modal(self):
-        JobIntakeModal(self.winfo_toplevel(), self.current_user, on_job_created_callback=lambda: self._show_view("jobs"))
+    def _open_new_job_modal(self, preselected_service_id=None):
+        target_view = "track" if self.is_customer else "jobs"
+        JobIntakeModal(self.winfo_toplevel(), self.current_user, on_job_created_callback=lambda: self._show_view(target_view), preselected_service_id=preselected_service_id)
 
     def _show_view(self, view_key):
         # Update nav button appearances
@@ -571,7 +572,7 @@ class MainMenuView(tk.Frame):
         elif view_key == "overview":
             view = DashboardView(self.view_host, self.current_user, self._show_view)
         elif view_key in ("services", "catalog"):
-            view = CatalogView(self.view_host, self.current_user)
+            view = CatalogView(self.view_host, self.current_user, on_book_callback=self._open_new_job_modal)
         elif view_key == "track":
             view = TrackRepairView(
                 self.view_host,
