@@ -244,10 +244,11 @@ class LandingPageView(tk.Frame):
     Features modern website layout, scrollable sections, hero CTA, interactive
     service drawers, proof telemetry marquee, and appointment booking.
     """
-    def __init__(self, parent, current_user=None, on_open_intake_callback=None):
+    def __init__(self, parent, current_user=None, on_open_intake_callback=None, on_navigate_callback=None):
         super().__init__(parent, bg=BG)
         self.current_user = current_user
         self.on_open_intake_callback = on_open_intake_callback
+        self.on_navigate_callback = on_navigate_callback
 
         self.section_anchors = {}
         self.accordion_items = []
@@ -501,6 +502,15 @@ class LandingPageView(tk.Frame):
                 if item != clicked_item and item.is_open:
                     item.collapse()
             clicked_item.expand()
+
+    def _expand_service_by_title(self, title):
+        norm = str(title).lower().strip()
+        for item in self.accordion_items:
+            t = str(item.data.get("title", "")).lower().strip()
+            if norm in t or t in norm:
+                item.expand()
+            else:
+                item.collapse()
 
     def _prefill_booking(self, svc_title):
         if hasattr(self, "book_svc_var"):
@@ -813,25 +823,44 @@ class LandingPageView(tk.Frame):
         foot_inner.pack(fill="x", padx=48, pady=(32, 24))
         self.section_inners.append(foot_inner)
 
-        def _make_link(parent, label_text, target_section=None):
+        def _make_link(parent, label_text, target_tab=None, target_section=None, accordion_title=None, command=None):
             lbl = tk.Label(parent, text=label_text, font=FONT_BODY, fg=MUTED, bg=BG_PANEL, cursor="hand2")
             lbl.pack(anchor="w", pady=2)
             lbl.bind("<Enter>", lambda e, l=lbl: l.configure(fg=EMERALD))
             lbl.bind("<Leave>", lambda e, l=lbl: l.configure(fg=MUTED))
-            if target_section:
-                lbl.bind("<Button-1>", lambda e, s=target_section: self.scroll_to_section(s))
+
+            def _on_click(e):
+                if command:
+                    command()
+                    return
+                # 1. Primary redirect: if on_navigate_callback is set and target_tab is provided
+                if target_tab and getattr(self, "on_navigate_callback", None):
+                    self.on_navigate_callback(target_tab)
+                    return
+                # 2. Accordion expansion if specified
+                if accordion_title:
+                    self.scroll_to_section("services")
+                    self._expand_service_by_title(accordion_title)
+                    return
+                # 3. Fallback to section scrolling
+                if target_section and target_section in self.section_anchors:
+                    self.scroll_to_section(target_section)
+                elif target_tab and getattr(self, "on_navigate_callback", None):
+                    self.on_navigate_callback(target_tab)
+
+            lbl.bind("<Button-1>", _on_click)
             return lbl
 
         cols_wrap = tk.Frame(foot_inner, bg=BG_PANEL)
         cols_wrap.pack(fill="x", pady=(0, 20))
 
-        # Col 1: Brand
+        # Col 1: Brand & Contact
         col1 = tk.Frame(cols_wrap, bg=BG_PANEL)
         col1.pack(side="left", fill="both", expand=True, padx=(0, 16))
 
         b_title = tk.Frame(col1, bg=BG_PANEL, cursor="hand2")
         b_title.pack(anchor="w", pady=(0, 6))
-        b_title.bind("<Button-1>", lambda e: self.scroll_to_section("hero"))
+        b_title.bind("<Button-1>", lambda e: self.on_navigate_callback("dashboard") if getattr(self, "on_navigate_callback", None) else self.scroll_to_section("hero"))
 
         tk.Label(b_title, text="FLUX", font=("Segoe UI", 14, "bold"), fg=INK, bg=BG_PANEL).pack(side="left")
         tk.Label(b_title, text=" REPAIR CO.", font=("Segoe UI", 9, "bold"), fg=EMERALD, bg=BG_PANEL).pack(side="left", pady=(2, 0))
@@ -846,28 +875,35 @@ class LandingPageView(tk.Frame):
             justify="left"
         ).pack(anchor="w", pady=(0, 8))
 
-        tk.Label(col1, text="118 Beacon Works, Unit 3, Old Mill District", font=FONT_SMALL, fg=DIM, bg=BG_PANEL).pack(anchor="w", pady=1)
-        tk.Label(col1, text="Phone: (555) 019-3350", font=FONT_SMALL, fg=EMERALD, bg=BG_PANEL).pack(anchor="w", pady=1)
+        addr_lbl = tk.Label(col1, text="118 Beacon Works, Unit 3, Old Mill District", font=FONT_SMALL, fg=DIM, bg=BG_PANEL, cursor="hand2")
+        addr_lbl.pack(anchor="w", pady=1)
+        addr_lbl.bind("<Enter>", lambda e: addr_lbl.configure(fg=EMERALD))
+        addr_lbl.bind("<Leave>", lambda e: addr_lbl.configure(fg=DIM))
+        addr_lbl.bind("<Button-1>", lambda e: self.on_navigate_callback("about") if getattr(self, "on_navigate_callback", None) else self.scroll_to_section("visit"))
 
-        # Col 2: Services
+        phone_lbl = tk.Label(col1, text="Phone: (555) 019-3350", font=FONT_SMALL, fg=EMERALD, bg=BG_PANEL, cursor="hand2")
+        phone_lbl.pack(anchor="w", pady=1)
+        phone_lbl.bind("<Button-1>", lambda e: self.on_navigate_callback("about") if getattr(self, "on_navigate_callback", None) else self.scroll_to_section("visit"))
+
+        # Col 2: Services (Routes directly to Services card catalog tab)
         col2 = tk.Frame(cols_wrap, bg=BG_PANEL)
         col2.pack(side="left", fill="both", expand=True, padx=16)
         tk.Label(col2, text="SERVICES", font=FONT_SMALL_BOLD, fg=INK, bg=BG_PANEL).pack(anchor="w", pady=(0, 8))
-        _make_link(col2, "Screens and Displays", "services")
-        _make_link(col2, "Liquid Damage Recovery", "services")
-        _make_link(col2, "Board-Level Micro-Soldering", "services")
-        _make_link(col2, "Batteries and Power Systems", "services")
-        _make_link(col2, "Dedicated Data Recovery", "services")
+        _make_link(col2, "Screens and Displays", target_tab="services", target_section="services")
+        _make_link(col2, "Liquid Damage Recovery", target_tab="services", target_section="services")
+        _make_link(col2, "Board-Level Micro-Soldering", target_tab="services", target_section="services")
+        _make_link(col2, "Batteries and Power Systems", target_tab="services", target_section="services")
+        _make_link(col2, "Dedicated Data Recovery", target_tab="services", target_section="services")
 
-        # Col 3: Process
+        # Col 3: Process (Routes directly to FAQ & Warranty tab)
         col3 = tk.Frame(cols_wrap, bg=BG_PANEL)
-        col3.pack(side="left", fill="both", expand=True, padx=16)
+        col3.pack(side="left", fill="both", expand=True, padx=(16, 0))
         tk.Label(col3, text="PROCESS", font=FONT_SMALL_BOLD, fg=INK, bg=BG_PANEL).pack(anchor="w", pady=(0, 8))
-        _make_link(col3, "Free 24-Hour Diagnosis", "process")
-        _make_link(col3, "Pre-Approval and Estimates", "process")
-        _make_link(col3, "Micro-Soldering Rework", "process")
-        _make_link(col3, "72-Hour Quality Stress Test", "process")
-        _make_link(col3, "90-Day Written Warranty", "process")
+        _make_link(col3, "Free 24-Hour Diagnosis", target_tab="faq", target_section="process")
+        _make_link(col3, "Pre-Approval and Estimates", target_tab="faq", target_section="process")
+        _make_link(col3, "Micro-Soldering Rework", target_tab="faq", target_section="process")
+        _make_link(col3, "72-Hour Quality Stress Test", target_tab="faq", target_section="process")
+        _make_link(col3, "90-Day Written Warranty", target_tab="faq", target_section="process")
 
         # Bottom copyright
         tk.Frame(foot_inner, bg=LINE, height=1).pack(fill="x", pady=(10, 10))

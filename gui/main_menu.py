@@ -559,7 +559,8 @@ class MainMenuView(tk.Frame):
                 view = LandingPageView(
                     self.view_host,
                     current_user=self.current_user,
-                    on_open_intake_callback=self._open_new_job_modal
+                    on_open_intake_callback=self._open_new_job_modal,
+                    on_navigate_callback=self._show_view
                 )
             else:
                 view = DashboardView(self.view_host, self.current_user, self._show_view)
@@ -567,7 +568,8 @@ class MainMenuView(tk.Frame):
             view = LandingPageView(
                 self.view_host,
                 current_user=self.current_user,
-                on_open_intake_callback=self._open_new_job_modal
+                on_open_intake_callback=self._open_new_job_modal,
+                on_navigate_callback=self._show_view
             )
         elif view_key == "overview":
             view = DashboardView(self.view_host, self.current_user, self._show_view)
