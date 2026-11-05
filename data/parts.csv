@@ -1,2 +1,7 @@
 part_id,name,quantity,unit_price,low_stock_threshold
 P-013,anti virus,8,500.00,3
+P-014,SSD 512GB NVMe,12,500.00,3
+P-015,Laptop Battery Pack,8,500.00,2
+P-016,LCD Panel 15.6 inch,5,500.00,1
+P-017,Thermal Paste Kit,20,500.00,5
+P-018,USB-C Charging Port,15,500.00,4

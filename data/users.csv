@@ -19,4 +19,12 @@ U-017,newuser1,Kelly123.,Customer,Kelly Roduta
 U-018,newuser12,Kelly123.,Customer,Kelly Roduta
 U-019,newuser1234,Kelly123.,Customer,asdsadsad adadas
 U-020,newuser12344,kelly123,Customer,asds dada
-U-021,myuser,Kelly123.,Customer,Hello sadsadas
+U-021,myuser,12345678,Customer,Hello sadsadas
+U-022,demo_staff,DemoPass123,Staff,Demo Staff
+U-023,frontdesk,DemoPass123,Staff,Front Desk Demo
+U-024,benchtech,DemoPass123,Technician,Bench Technician
+U-025,microsolder,DemoPass123,Technician,Microsoldering Technician
+U-026,demo_customer01,DemoPass123,Customer,Mia Santos
+U-027,demo_customer02,DemoPass123,Customer,Noah Reyes
+U-028,demo_customer03,DemoPass123,Customer,Ava Cruz
+U-029,demo_customer04,DemoPass123,Customer,Liam Garcia

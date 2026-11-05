@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from storage import init_storage
 from logic.auth import seed_default_admin
 from logic.catalog import seed_sample_services
+from logic.demo_data import seed_demo_data
 from gui.app import App
 
 
@@ -28,6 +29,7 @@ def main():
 
     # Step 3: Seed standard sample repair services (FR-22)
     seed_sample_services()
+    seed_demo_data()
 
     # Step 4: Launch Tkinter Desktop Application
     app = App()

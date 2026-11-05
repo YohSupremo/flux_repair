@@ -710,58 +710,72 @@ class MainMenuView(tk.Frame):
         for child in self.view_host.winfo_children():
             child.destroy()
 
-        # Instantiate or re-display view
-        if view_key == "dashboard":
-            if self.is_customer:
+        try:
+            # Instantiate or re-display view
+            if view_key == "dashboard":
+                if self.is_customer:
+                    view = LandingPageView(
+                        self.view_host,
+                        current_user=self.current_user,
+                        on_open_intake_callback=self._open_new_job_modal,
+                        on_navigate_callback=self._show_view
+                    )
+                else:
+                    view = DashboardView(self.view_host, self.current_user, self._show_view)
+            elif view_key == "website":
                 view = LandingPageView(
                     self.view_host,
                     current_user=self.current_user,
                     on_open_intake_callback=self._open_new_job_modal,
                     on_navigate_callback=self._show_view
                 )
-            else:
+            elif view_key == "overview":
                 view = DashboardView(self.view_host, self.current_user, self._show_view)
-        elif view_key == "website":
-            view = LandingPageView(
-                self.view_host,
-                current_user=self.current_user,
-                on_open_intake_callback=self._open_new_job_modal,
-                on_navigate_callback=self._show_view
+            elif view_key in ("services", "catalog"):
+                view = CatalogView(self.view_host, self.current_user, on_book_callback=self._open_new_job_modal)
+            elif view_key == "track":
+                view = TrackRepairView(
+                    self.view_host,
+                    current_user=self.current_user,
+                    on_open_intake_callback=self._open_new_job_modal
+                )
+            elif view_key == "faq":
+                view = FAQWarrantyView(
+                    self.view_host,
+                    acting_user=self.current_user,
+                    on_book_callback=self._open_new_job_modal
+                )
+            elif view_key == "about":
+                view = AboutUsView(
+                    self.view_host,
+                    acting_user=self.current_user,
+                    on_book_callback=self._open_new_job_modal
+                )
+            elif view_key == "jobs":
+                view = JobsView(self.view_host, self.current_user)
+            elif view_key == "customers":
+                view = CustomersView(self.view_host, self.current_user, on_open_job_callback=lambda: self._show_view("jobs"))
+            elif view_key == "parts":
+                view = PartsView(self.view_host, self.current_user)
+            elif view_key == "reports":
+                view = ReportsView(self.view_host, self.current_user)
+            elif view_key == "users":
+                view = UsersView(self.view_host, self.current_user)
+            else:
+                view = tk.Label(self.view_host, text=f"View {view_key} not found.", font=FONT_BODY, bg=BG)
+        except Exception as exc:
+            messagebox.showerror(
+                "Unable to Open View",
+                f"The {view_key} view could not be loaded:\n\n{exc}",
+                parent=self.winfo_toplevel()
             )
-        elif view_key == "overview":
-            view = DashboardView(self.view_host, self.current_user, self._show_view)
-        elif view_key in ("services", "catalog"):
-            view = CatalogView(self.view_host, self.current_user, on_book_callback=self._open_new_job_modal)
-        elif view_key == "track":
-            view = TrackRepairView(
+            view = tk.Label(
                 self.view_host,
-                current_user=self.current_user,
-                on_open_intake_callback=self._open_new_job_modal
+                text=f"Unable to load {view_key}.",
+                font=FONT_BODY,
+                fg=RED,
+                bg=BG
             )
-        elif view_key == "faq":
-            view = FAQWarrantyView(
-                self.view_host,
-                acting_user=self.current_user,
-                on_book_callback=self._open_new_job_modal
-            )
-        elif view_key == "about":
-            view = AboutUsView(
-                self.view_host,
-                acting_user=self.current_user,
-                on_book_callback=self._open_new_job_modal
-            )
-        elif view_key == "jobs":
-            view = JobsView(self.view_host, self.current_user)
-        elif view_key == "customers":
-            view = CustomersView(self.view_host, self.current_user, on_open_job_callback=lambda: self._show_view("jobs"))
-        elif view_key == "parts":
-            view = PartsView(self.view_host, self.current_user)
-        elif view_key == "reports":
-            view = ReportsView(self.view_host, self.current_user)
-        elif view_key == "users":
-            view = UsersView(self.view_host, self.current_user)
-        else:
-            view = tk.Label(self.view_host, text=f"View {view_key} not found.", font=FONT_BODY, bg=BG)
 
         view.pack(fill="both", expand=True)
         self.current_view_name = view_key
