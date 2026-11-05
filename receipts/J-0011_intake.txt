@@ -1,0 +1,25 @@
+================================================
+           FLUX REPAIR CO. ATELIER
+       SURGICAL ELECTRONICS DIAGNOSTICS
+================================================
+JOB TICKET: J-0011        DATE: 2026-11-05 18:34
+------------------------------------------------
+CUSTOMER: Kelly User
+CONTACT:  asdsad
+------------------------------------------------
+DEVICE:    Laptop - Not specified adsa
+SERIAL NO: ONLINE-C-014
+CONDITION: To be inspected
+PRIORITY:  Normal
+------------------------------------------------
+REPORTED ISSUE:
+  adsa
+------------------------------------------------
+INITIAL SERVICES AT INTAKE:
+  • Diagnostic                              ₱0.00
+------------------------------------------------
+ESTIMATED TOTAL:                           ₱0.00
+================================================
+Notice: Devices unclaimed after 60 days are subject
+to workshop disposal rules. Thank you for your trust.
+================================================

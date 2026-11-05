@@ -44,8 +44,15 @@ class AboutUsView(tk.Frame):
             if self.winfo_exists() and canvas.winfo_exists():
                 canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
-        canvas.bind("<MouseWheel>", _on_mousewheel)
-        scrollable_frame.bind("<MouseWheel>", _on_mousewheel)
+        self.bind_all("<MouseWheel>", _on_mousewheel)
+        self.bind_all("<Button-4>", lambda e: canvas.yview_scroll(-1, "units"))
+        self.bind_all("<Button-5>", lambda e: canvas.yview_scroll(1, "units"))
+        def _unbind_mousewheel(event):
+            self.unbind_all("<MouseWheel>")
+            self.unbind_all("<Button-4>")
+            self.unbind_all("<Button-5>")
+
+        self.bind("<Destroy>", _unbind_mousewheel)
 
         canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")

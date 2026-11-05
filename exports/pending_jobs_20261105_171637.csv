@@ -1,0 +1,11 @@
+job_id,customer_name,device_type,brand,model,serial_no,priority,status,date_received
+J-0010,Asahi Roduta,Laptop,sda,asd,asd,Normal,Received,2026-11-05 17:13
+J-0009,Kell Roduta,Laptop,adas,asdas,asda,Normal,Received,2026-11-05 17:07
+J-0008,Asahi Roduta,Laptop,Not specified,asd,ONLINE-C-002,Normal,Received,2026-11-05 16:36
+J-0007,Asahi Roduta,Laptop,asdasd,adasd,asdasdas,Normal,Received,2026-11-05 16:30
+J-0006,Asahi Roduta,Laptop,Apple,Macbook Pro M1,1234567,Normal,Received,2026-11-05 16:23
+J-0005,Test Shop User,Laptop,Pineapple,Mikmik,6967,Urgent,Received,2026-10-19 15:34
+J-0004,Asahi Roduta,Laptop,asdsad,sadas,232,Normal,Received,2026-10-15 22:13
+J-0003,Asahi Roduta,Laptop,adsa,aada,232,Normal,Received,2026-10-15 22:10
+J-0002,Asahi Roduta,Laptop,asdad,adadsa,232,Normal,Received,2026-10-15 22:08
+J-0001,Asahi Roduta,Laptop,Branded,adasdad,23213,Normal,Received,2026-10-15 22:02

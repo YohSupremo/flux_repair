@@ -1,0 +1,26 @@
+================================================
+           FLUX REPAIR CO. ATELIER
+       SURGICAL ELECTRONICS DIAGNOSTICS
+================================================
+JOB TICKET: J-0006        DATE: 2026-11-05 16:23
+------------------------------------------------
+CUSTOMER: Kelly Laurenc
+CONTACT:  0917-123-4567
+------------------------------------------------
+DEVICE:    Laptop - Apple Macbook Pro M1
+SERIAL NO: 1234567
+CONDITION: Normal cosmetic wear, no major chassis cracks
+PRIORITY:  Normal
+ACCESSORIES: OEM Charger / Power Adapter
+------------------------------------------------
+REPORTED ISSUE:
+  need reinstall of OS
+------------------------------------------------
+INITIAL SERVICES AT INTAKE:
+  • OS Reinstallation                     ₱500.00
+------------------------------------------------
+ESTIMATED TOTAL:                         ₱500.00
+================================================
+Notice: Devices unclaimed after 60 days are subject
+to workshop disposal rules. Thank you for your trust.
+================================================

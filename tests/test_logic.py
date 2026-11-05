@@ -6,7 +6,7 @@ from decimal import Decimal
 import config
 from storage import init_storage
 from logic.auth import seed_default_admin, login, add_user, edit_user, delete_user, list_users
-from logic.customers import add_customer, edit_customer, delete_customer, search_customers
+from logic.customers import add_customer, edit_customer, delete_customer, search_customers, list_customers
 from logic.catalog import seed_sample_services, add_service, list_services
 from logic.parts import add_part, add_part_to_job, remove_part_from_job, list_parts
 from logic.jobs import create_job, change_status, current_status
@@ -81,6 +81,71 @@ class TestLogic(unittest.TestCase):
         # Valid contact number accepted
         cust_ok = register_user('cust_phone_ok', 'secret123', 'secret123', 'Phone OK', contact_no='0917-123-4567')
         self.assertEqual(cust_ok['username'], 'cust_phone_ok')
+
+    def test_authorized_customer_onboarding(self):
+        from logic.customers import register_customer_account
+        staff = add_user('staff_onboard', 'staff123', 'Staff', 'Staff Onboarder', self.admin)
+        new_user = register_customer_account(
+            'new_cust', 'secret123', 'secret123', 'New Customer',
+            '0917-111-2222', 'newcust@test.com', '1 Sample St, City, State, 1234',
+            staff
+        )
+        self.assertEqual(new_user['role'], 'Customer')
+
+        # Linked customer profile is created and the account can sign in
+        self.assertTrue(any(c['email'] == 'newcust@test.com' for c in list_customers()))
+        self.assertEqual(login('new_cust', 'secret123')['user_id'], new_user['user_id'])
+
+        # An existing walk-in profile can be given a login without duplication
+        add_customer('Walk In', '0917-555-0000', 'walkin@test.com', 'Old Address', self.admin)
+        walkin_user = register_customer_account(
+            'walkin', 'secret123', 'secret123', 'Walk In',
+            '0917-555-1111', 'walkin@test.com', 'New Address', staff
+        )
+        self.assertEqual(walkin_user['role'], 'Customer')
+        walkin_profiles = [c for c in list_customers() if c['email'] == 'walkin@test.com']
+        self.assertEqual(len(walkin_profiles), 1)
+        self.assertEqual(walkin_profiles[0]['address'], 'New Address')
+
+        # Email owned by a different customer is still rejected
+        with self.assertRaises(ValidationError):
+            register_customer_account(
+                'other_walkin', 'secret123', 'secret123', 'Different Person',
+                '0917-555-2222', 'walkin@test.com', 'Elsewhere', staff
+            )
+
+        # Roles without customer permission are rejected
+        tech = add_user('tech_onboard', 'tech1234', 'Technician', 'Tech Onboarder', self.admin)
+        with self.assertRaises(RuleError):
+            register_customer_account(
+                'bad_cust', 'secret123', 'secret123', 'Bad Customer',
+                '0917-333-4444', 'badcust@test.com', '2 Sample St, City, State, 1234',
+                tech
+            )
+
+    def test_staff_profile_persists(self):
+        from logic.auth import get_user_profile, update_profile
+        staff = add_user('staff_profile', 'staff123', 'Staff', 'Staff Profile', self.admin)
+
+        update_profile(
+            staff['user_id'], 'Staff Profile', '0917-765-4321',
+            'staffprofile@test.com', '9 Workshop Rd, City, State, 1234'
+        )
+
+        # Reload from disk to prove the details were persisted for a non-customer role
+        init_storage()
+        saved = get_user_profile(staff['user_id'])
+        self.assertEqual(saved['contact_no'], '0917-765-4321')
+        self.assertEqual(saved['email'], 'staffprofile@test.com')
+        self.assertEqual(saved['address'], '9 Workshop Rd, City, State, 1234')
+
+        # Admin accounts also persist their own profile details
+        profile = update_profile(
+            self.admin['user_id'], 'Default Administrator', '0917-000-1111',
+            'admin@test.com', '1 Admin Ave, City, State, 1234'
+        )
+        self.assertEqual(profile['role'], 'Admin')
+        self.assertEqual(get_user_profile(self.admin['user_id'])['email'], 'admin@test.com')
 
     def test_customer_crud_and_protection(self):
         c = add_customer('Maria Santos', '0917-123-4567', 'maria@test.com', 'Makati City', self.admin)

@@ -1,7 +1,22 @@
 user_id,username,password,role,full_name
 U-001,admin,admin123,Admin,Default Administrator
 U-002,tech1,pass123,Technician,Tech Juan
-U-003,Kelly,Kelly123.,Customer,Kelly Laurenc
+U-003,Kelly,kelly1234,Customer,Kelly Roduta
 U-004,testuser_shop,pass123,Customer,Test Shop User
 U-005,asahi,asahi123,Customer,Asa Roduta
-U-006,Lysinas,pass1234,Customer,Ardee Orlanda
+U-006,Lysinas,pass1234,Customer,Ardees Orlanda
+U-007,Asahi1,Kelly123.,Customer,Kelly Roduta
+U-008,kelly12,Kelly123.,Customer,Kelly Roduta
+U-009,Asahi3,kelly12345,Customer,Asahi Roduta
+U-010,Kellyy,Kelly123.,Customer,kelly roduta
+U-011,Kelly123,Kelly123.,Customer,Kell Roduta
+U-012,staff,kelly123,Staff,Kelly User
+U-013,username12,Kelly123.,Customer,Kelly Roduta
+U-014,new,Kelly123.,Customer,Kelly Roduta
+U-015,newuser,Kelly12.,Customer,Kelly Roduta
+U-016,newuser123,Kelly123.,Customer,Kelly Roduta
+U-017,newuser1,Kelly123.,Customer,Kelly Roduta
+U-018,newuser12,Kelly123.,Customer,Kelly Roduta
+U-019,newuser1234,Kelly123.,Customer,asdsadsad adadas
+U-020,newuser12344,kelly123,Customer,asds dada
+U-021,myuser,Kelly123.,Customer,Hello sadsadas

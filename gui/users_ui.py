@@ -9,7 +9,9 @@ from gui.widgets import (
     primary_button, secondary_button, danger_button, make_table,
     fill_table, labeled_field, guard, confirm
 )
-from logic.auth import list_users, add_user, edit_user, delete_user
+from logic.auth import (
+    list_users, add_user, edit_user, delete_user, reactivate_account
+)
 from models import ROLES
 
 
@@ -50,9 +52,9 @@ class UsersView(tk.Frame):
         table_wrap = tk.Frame(self, bg=BG, padx=24, pady=16)
         table_wrap.pack(fill="both", expand=True)
 
-        cols = ("user_id", "username", "role", "full_name")
-        heads = ("User ID", "Login Username", "System Role", "Operator Full Name")
-        widths = (110, 180, 150, 280)
+        cols = ("user_id", "username", "role", "full_name", "status")
+        heads = ("User ID", "Login Username", "System Role", "Operator Full Name", "Status")
+        widths = (110, 180, 150, 280, 110)
 
         self.table_frame, self.tree = make_table(table_wrap, cols, heads, widths)
         self.table_frame.pack(fill="both", expand=True)
@@ -63,10 +65,13 @@ class UsersView(tk.Frame):
 
         secondary_button(bottom_bar, "Edit User Account", command=self._open_edit_modal).pack(side="left", padx=(0, 8))
         danger_button(bottom_bar, "Delete Account", command=self._handle_delete).pack(side="left")
+        secondary_button(
+            bottom_bar, "Reactivate Account", command=self._handle_reactivate
+        ).pack(side="left", padx=(8, 0))
 
     def refresh(self):
         users = list_users()
-        cols = ("user_id", "username", "role", "full_name")
+        cols = ("user_id", "username", "role", "full_name", "status")
         fill_table(self.tree, users, cols)
 
     def _get_selected_user(self):
@@ -97,6 +102,16 @@ class UsersView(tk.Frame):
         if confirm("Confirm Deletion", f"Are you sure you want to delete user account '{uname}' ({uid})?"):
             delete_user(uid, self.acting_user)
             messagebox.showinfo("Account Deleted", f"User {uid} successfully deleted.")
+            self.refresh()
+
+    @guard
+    def _handle_reactivate(self):
+        u = self._get_selected_user()
+        if not u or u.get('status') == 'Active':
+            return
+        if confirm("Confirm Reactivation", f"Reactivate account '{u['username']}'?"):
+            reactivate_account(u['user_id'], self.acting_user)
+            messagebox.showinfo("Account Reactivated", "The account is active again.")
             self.refresh()
 
 

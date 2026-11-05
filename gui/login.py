@@ -9,7 +9,7 @@ from gui.theme import (
 from gui.widgets import guard, primary_button, secondary_button
 from logic.auth import (
     login, register_user, find_user_by_identity, recover_password,
-    compose_full_name, compose_address
+    compose_full_name, compose_address, validate_registration_email
 )
 from storage import get_rows
 from errors import ValidationError, RuleError
@@ -264,6 +264,7 @@ class LoginView(tk.Frame):
         self.on_login_success = on_login_success
         self.mode = "login"  # 'login' or 'register'
         self.show_password = False
+        self.show_registration_passwords = False
         self.remember_var = tk.BooleanVar(value=True)
         self.field_errors = {}
         self.field_wrappers = {}
@@ -402,41 +403,6 @@ class LoginView(tk.Frame):
         self.inner.pack()
         tk.Frame(self.inner, width=480, height=0, bg=BG_PANEL).pack()
 
-        # Segmented Pill Switcher
-        pill_box = tk.Frame(self.inner, bg="#f1f5f9", padx=4, pady=4, bd=0, highlightthickness=1, highlightbackground=LINE)
-        pill_box.pack(fill="x", pady=(0, 28))
-
-        self.btn_tab_login = tk.Button(
-            pill_box,
-            text="Sign In",
-            font=FONT_SMALL_BOLD,
-            bg="#ffffff",
-            fg=INK,
-            bd=0,
-            highlightthickness=1,
-            highlightbackground=LINE,
-            padx=18,
-            pady=8,
-            cursor="hand2",
-            command=lambda: self._set_mode("login")
-        )
-        self.btn_tab_login.pack(side="left", fill="x", expand=True, padx=2)
-
-        self.btn_tab_reg = tk.Button(
-            pill_box,
-            text="Register",
-            font=FONT_SMALL_BOLD,
-            bg="#f1f5f9",
-            fg=MUTED,
-            bd=0,
-            highlightthickness=0,
-            padx=18,
-            pady=8,
-            cursor="hand2",
-            command=lambda: self._set_mode("register")
-        )
-        self.btn_tab_reg.pack(side="left", fill="x", expand=True, padx=2)
-
         # Dynamic form area
         self.form_host = tk.Frame(self.inner, bg=BG_PANEL)
         self.form_host.pack(fill="x")
@@ -477,6 +443,17 @@ class LoginView(tk.Frame):
             if any(c.isalpha() for c in char):
                 self._show_field_error(key, "Contact number cannot contain letters.")
                 return False
+            if sum(c.isdigit() for c in proposed) > 11:
+                self._show_field_error(key, "Contact number cannot exceed 11 digits.")
+                return False
+        self._clear_field_error(key)
+        return True
+
+    def _on_postal_char_validate(self, key, action, proposed, char):
+        if action == '1' and (not char.isdigit() or len(proposed) > 4):
+            self._show_field_error(key, "Postal code must contain exactly 4 digits.")
+            return False
+        self._clear_field_error(key)
         return True
 
     def _render_form(self):
@@ -488,12 +465,8 @@ class LoginView(tk.Frame):
 
         is_login = (self.mode == "login")
         if is_login:
-            self.btn_tab_login.configure(bg="#ffffff", fg=INK, highlightthickness=1)
-            self.btn_tab_reg.configure(bg="#f1f5f9", fg=MUTED, highlightthickness=0)
             self._build_login_form()
         else:
-            self.btn_tab_login.configure(bg="#f1f5f9", fg=MUTED, highlightthickness=0)
-            self.btn_tab_reg.configure(bg="#ffffff", fg=INK, highlightthickness=1)
             self._build_register_form()
 
     def _build_login_form(self):
@@ -504,10 +477,10 @@ class LoginView(tk.Frame):
             font=FONT_SMALL,
             fg=MUTED,
             bg=BG_PANEL
-        ).pack(anchor="w", pady=(4, 24))
+        ).pack(anchor="w", pady=(6, 30))
 
         # Username / Email Input
-        self.user_entry = self._build_input(self.form_host, "Username or email address", "e.g. admin or customer", bottom_pad=14, field_key="login_ident")
+        self.user_entry = self._build_input(self.form_host, "Username or email address", "e.g. admin or customer", bottom_pad=20, field_key="login_ident")
         self.user_entry.focus_set()
 
         # Password Input with Toggle
@@ -517,13 +490,13 @@ class LoginView(tk.Frame):
             "Enter password",
             show="*" if not self.show_password else "",
             with_toggle=True,
-            bottom_pad=10,
+            bottom_pad=16,
             field_key="login_pass"
         )
 
         # Remember Me and Forgot Password Row
         opt_row = tk.Frame(self.form_host, bg=BG_PANEL)
-        opt_row.pack(fill="x", pady=(0, 24))
+        opt_row.pack(fill="x", pady=(0, 30))
 
         cb = tk.Checkbutton(
             opt_row,
@@ -584,11 +557,11 @@ class LoginView(tk.Frame):
             font=FONT_SMALL,
             fg=MUTED,
             bg=BG_PANEL
-        ).pack(anchor="w", pady=(4, 20))
+        ).pack(anchor="w", pady=(6, 28))
 
         # 3-Step Segmented Stepper Bar (Read-only visual indicator; progression via buttons only)
         self.reg_tab_bar = tk.Frame(self.form_host, bg="#f1f5f9", padx=3, pady=3, bd=0, highlightthickness=1, highlightbackground=LINE)
-        self.reg_tab_bar.pack(fill="x", pady=(0, 26))
+        self.reg_tab_bar.pack(fill="x", pady=(0, 32))
 
         self.reg_tab_btns = {}
         tabs = [
@@ -620,7 +593,7 @@ class LoginView(tk.Frame):
 
         # Divided Name: First Name & Last Name in 2 columns
         name_row = tk.Frame(self.reg_v_personal, bg=BG_PANEL)
-        name_row.pack(fill="x", pady=(0, 16))
+        name_row.pack(fill="x", pady=(0, 20))
 
         b_fn = tk.Frame(name_row, bg=BG_PANEL)
         b_fn.pack(side="left", fill="x", expand=True, padx=(0, 8))
@@ -642,7 +615,7 @@ class LoginView(tk.Frame):
 
         # Contact Number
         b_phone = tk.Frame(self.reg_v_personal, bg=BG_PANEL)
-        b_phone.pack(fill="x", pady=(0, 8))
+        b_phone.pack(fill="x", pady=(0, 14))
         tk.Label(b_phone, text="Contact number *", font=FONT_SMALL_BOLD, fg=MUTED, bg=BG_PANEL).pack(anchor="w", pady=(0, 4))
         w_phone = tk.Frame(b_phone, bg=BG_INPUT, bd=0, highlightthickness=1, highlightbackground=LINE)
         w_phone.pack(fill="x")
@@ -652,15 +625,7 @@ class LoginView(tk.Frame):
         self.field_errors["phone"] = tk.Label(b_phone, text="", font=("Segoe UI", 8), fg=RED, bg=BG_PANEL, anchor="w")
 
         # Guidance Note
-        tk.Label(
-            self.reg_v_personal,
-            text="Primary contact used for real-time bench updates and pick-up authorization.",
-            font=("Segoe UI", 8),
-            fg=DIM,
-            bg=BG_PANEL,
-            wraplength=460,
-            justify="left"
-        ).pack(anchor="w", pady=(2, 28))
+        tk.Frame(self.reg_v_personal, bg=BG_PANEL, height=36).pack(fill="x")
 
         # Next Button
         btn_next_sec = primary_button(
@@ -676,7 +641,7 @@ class LoginView(tk.Frame):
 
         # Username & Email in 2 columns
         row_id = tk.Frame(self.reg_v_security, bg=BG_PANEL)
-        row_id.pack(fill="x", pady=(0, 16))
+        row_id.pack(fill="x", pady=(0, 22))
 
         b_user = tk.Frame(row_id, bg=BG_PANEL)
         b_user.pack(side="left", fill="x", expand=True, padx=(0, 8))
@@ -698,15 +663,20 @@ class LoginView(tk.Frame):
 
         # Passwords in 2 columns
         row_pw = tk.Frame(self.reg_v_security, bg=BG_PANEL)
-        row_pw.pack(fill="x", pady=(0, 6))
+        row_pw.pack(fill="x", pady=(0, 12))
 
         b_p1 = tk.Frame(row_pw, bg=BG_PANEL)
         b_p1.pack(side="left", fill="x", expand=True, padx=(0, 8))
         tk.Label(b_p1, text="Password *", font=FONT_SMALL_BOLD, fg=MUTED, bg=BG_PANEL).pack(anchor="w", pady=(0, 4))
         w_p1 = tk.Frame(b_p1, bg=BG_INPUT, bd=0, highlightthickness=1, highlightbackground=LINE)
         w_p1.pack(fill="x")
+        w_p1.configure(height=35)
+        w_p1.pack_propagate(False)
         self.reg_pwd = tk.Entry(w_p1, font=FONT_BODY, bg=BG_INPUT, fg=INK, bd=0, show="*")
-        self.reg_pwd.pack(fill="x", ipady=7, padx=10)
+        self.reg_pwd.pack(side="left", fill="both", expand=True, padx=10)
+        eye_pwd = self._password_toggle(w_p1)
+        self.reg_pwd_toggle = eye_pwd
+        eye_pwd.bind("<Button-1>", lambda e: self._toggle_registration_password(self.reg_pwd, eye_pwd))
         self.field_errors["pwd"] = tk.Label(b_p1, text="", font=("Segoe UI", 8), fg=RED, bg=BG_PANEL, anchor="w")
 
         b_p2 = tk.Frame(row_pw, bg=BG_PANEL)
@@ -714,17 +684,22 @@ class LoginView(tk.Frame):
         tk.Label(b_p2, text="Confirm password *", font=FONT_SMALL_BOLD, fg=MUTED, bg=BG_PANEL).pack(anchor="w", pady=(0, 4))
         w_p2 = tk.Frame(b_p2, bg=BG_INPUT, bd=0, highlightthickness=1, highlightbackground=LINE)
         w_p2.pack(fill="x")
+        w_p2.configure(height=35)
+        w_p2.pack_propagate(False)
         self.reg_cpwd = tk.Entry(w_p2, font=FONT_BODY, bg=BG_INPUT, fg=INK, bd=0, show="*")
-        self.reg_cpwd.pack(fill="x", ipady=7, padx=10)
+        self.reg_cpwd.pack(side="left", fill="both", expand=True, padx=10)
+        eye_cpwd = self._password_toggle(w_p2)
+        self.reg_cpwd_toggle = eye_cpwd
+        eye_cpwd.bind("<Button-1>", lambda e: self._toggle_registration_password(self.reg_cpwd, eye_cpwd))
         self.field_errors["cpwd"] = tk.Label(b_p2, text="", font=("Segoe UI", 8), fg=RED, bg=BG_PANEL, anchor="w")
 
         tk.Label(
             self.reg_v_security,
-            text="Min 8 characters. Both username and email can be used to sign in.",
+            text="Use at least 8 characters.",
             font=("Segoe UI", 8),
             fg=DIM,
             bg=BG_PANEL
-        ).pack(anchor="w", pady=(2, 28))
+        ).pack(anchor="w", pady=(4, 24))
 
         # Nav Buttons Row
         sec_nav = tk.Frame(self.reg_v_security, bg=BG_PANEL)
@@ -798,7 +773,8 @@ class LoginView(tk.Frame):
         tk.Label(b_zip, text="Postal code / ZIP *", font=FONT_SMALL_BOLD, fg=MUTED, bg=BG_PANEL).pack(anchor="w", pady=(0, 4))
         w_zip = tk.Frame(b_zip, bg=BG_INPUT, bd=0, highlightthickness=1, highlightbackground=LINE)
         w_zip.pack(fill="x")
-        self.reg_zip = tk.Entry(w_zip, font=FONT_BODY, bg=BG_INPUT, fg=INK, bd=0)
+        vcmd_zip = (self.register(lambda act, p, char: self._on_postal_char_validate("zip", act, p, char)), '%d', '%P', '%S')
+        self.reg_zip = tk.Entry(w_zip, font=FONT_BODY, bg=BG_INPUT, fg=INK, bd=0, validate="key", validatecommand=vcmd_zip)
         self.reg_zip.pack(fill="x", ipady=7, padx=10)
         self.field_errors["zip"] = tk.Label(b_zip, text="", font=("Segoe UI", 8), fg=RED, bg=BG_PANEL, anchor="w")
 
@@ -842,7 +818,8 @@ class LoginView(tk.Frame):
             self.field_wrappers[key] = wrp
             ent.bind("<FocusIn>", lambda e, k=key, w=wrp: self._on_field_focus(k, w))
             ent.bind("<FocusOut>", lambda e, k=key, w=wrp: self._on_field_unfocus(k, w))
-            ent.bind("<KeyRelease>", lambda e, k=key: self._clear_field_error(k))
+            if key not in ("phone", "zip"):
+                ent.bind("<KeyRelease>", lambda e, k=key: self._clear_field_error(k))
 
         # Return key progression
         self.reg_fname.bind("<Return>", lambda e: self.reg_lname.focus_set())
@@ -918,6 +895,27 @@ class LoginView(tk.Frame):
 
         self._switch_reg_tab("security")
 
+    def _toggle_registration_password(self, entry, toggle):
+        is_hidden = entry.cget("show") == "*"
+        entry.configure(show="" if is_hidden else "*")
+        toggle.configure(
+            text="Hide" if is_hidden else "Show",
+            fg=EMERALD if is_hidden else MUTED
+        )
+
+    def _password_toggle(self, parent):
+        toggle = tk.Label(
+            parent,
+            text="Show",
+            font=("Segoe UI", 8, "bold"),
+            fg=MUTED,
+            bg=BG_INPUT,
+            cursor="hand2",
+            padx=8
+        )
+        toggle.pack(side="right")
+        return toggle
+
     def _proceed_from_security(self):
         self._clear_all_field_errors()
         self.err_lbl.configure(text="")
@@ -958,6 +956,14 @@ class LoginView(tk.Frame):
             has_error = True
             if not first_focus:
                 first_focus = self.reg_email
+        else:
+            try:
+                validate_registration_email(email)
+            except ValidationError as ve:
+                self._show_field_error("email", str(ve))
+                has_error = True
+                if not first_focus:
+                    first_focus = self.reg_email
 
         if not pwd:
             self._show_field_error("pwd", "Password is required.")
@@ -1156,6 +1162,11 @@ class LoginView(tk.Frame):
             has_error = True
             if not first_focus:
                 first_focus = self.reg_zip
+        elif not zip_code.isdigit() or len(zip_code) != 4:
+            self._show_field_error("zip", "Postal code must contain exactly 4 digits.")
+            has_error = True
+            if not first_focus:
+                first_focus = self.reg_zip
 
         if has_error:
             first_focus.focus_set()
@@ -1193,6 +1204,14 @@ class LoginView(tk.Frame):
                 self._switch_reg_tab("personal")
                 self._show_field_error("phone", err_msg)
                 self.reg_phone.focus_set()
+            elif "email" in err_msg.lower():
+                self._switch_reg_tab("security")
+                self._show_field_error("email", err_msg)
+                self.reg_email.focus_set()
+            elif "postal" in err_msg.lower() or "zip" in err_msg.lower():
+                self._switch_reg_tab("address")
+                self._show_field_error("zip", err_msg)
+                self.reg_zip.focus_set()
             else:
                 self.err_lbl.configure(text=err_msg)
         except Exception as e:

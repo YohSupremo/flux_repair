@@ -1,6 +1,12 @@
 customer_id,name,contact_no,email,address
 C-001,Pedro Penduko,0922-555-1111,pedro@test.com,Quezon City
-C-002,Kelly Laurenc,0917-123-4567,kelly@flux.local,Makati City
+C-002,Kelly Rodut,09516646031,kelly@gmail.com,"Block 09 Lot 16, Palayan Village, Taguig City, Metro Manila, 1630"
 C-003,Test Shop User,0917-555-1234,shopuser@flux.local,"Unit 12, Tower B, Makati"
 C-004,Asa Roduta,3232322,asahi@gmail.com,"Block 3 Lot 18, Palayan Village, Taguig City, Metro Manila, 1630"
-C-005,Ardee Orlanda,0927-377-2079,jhadeorlanda117@gmail.com,"Purok 4 Bagumbayan, Blk 4 Lot 8, Taguig City, Rongavilla Subdivision., 1630"
+C-005,Ardees Orlanda,0927-377-2071,jhadeorlanda117@gmail.com,"Purok 4 Bagumbayans, Blk 4 Lot 8, Taguig City, Rongavilla Subdivision., 1630"
+C-007,Kelly Atudor,09213213213,kellyroduta@gmail.com,"Block 034 Lot 1213, Moon Village, Taguig City, Metro Manila, 1630"
+C-010,Kelly Roduta,09132123123,usr@gmail.com,"asda, dadaddad, dsadad, asd, 2323"
+C-011,asdsadsad adadas,09131323232,r@gmail.com,"asdasd, dadad, asda, dasdad, 2323"
+C-012,asds dada,23232323232,k1@gmail.com,"asdsaddd, dsadas, asdasd, asdasd, 3232"
+C-013,Hello sadsadas,23232323232,usrr@gmail.com,"asdasdad, adada, asdad, ada, 2323"
+C-014,Kelly User,asdsad,,

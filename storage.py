@@ -176,6 +176,18 @@ def save_table(name):
 def get_rows(table_name):
     """Return in-memory list of dicts for given table."""
     if table_name not in db:
+        if table_name not in TABLES:
+            raise StorageError(f"Unknown table: {table_name}")
+        tpath = table_path(table_name)
+        # Self-heal tables added after the data directory was initialized.
+        if not os.path.exists(tpath):
+            try:
+                os.makedirs(config.DATA_DIR, exist_ok=True)
+                with open(tpath, "w", newline="", encoding="utf-8") as f:
+                    writer = csv.DictWriter(f, fieldnames=TABLES[table_name])
+                    writer.writeheader()
+            except OSError as e:
+                raise StorageError(f"Cannot create table {table_name}.csv: {e}")
         load_table(table_name)
     return db[table_name]
 

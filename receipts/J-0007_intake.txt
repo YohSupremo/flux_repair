@@ -1,0 +1,26 @@
+================================================
+           FLUX REPAIR CO. ATELIER
+       SURGICAL ELECTRONICS DIAGNOSTICS
+================================================
+JOB TICKET: J-0007        DATE: 2026-11-05 16:30
+------------------------------------------------
+CUSTOMER: Kelly Laurenc
+CONTACT:  0917-123-4567
+------------------------------------------------
+DEVICE:    Laptop - asdasd adasd
+SERIAL NO: asdasdas
+CONDITION: Normal cosmetic wear, no major chassis cracks
+PRIORITY:  Normal
+------------------------------------------------
+REPORTED ISSUE:
+  asd
+------------------------------------------------
+INITIAL SERVICES AT INTAKE:
+  • Diagnostic                              ₱0.00
+  • Virus Removal                         ₱600.00
+------------------------------------------------
+ESTIMATED TOTAL:                         ₱600.00
+================================================
+Notice: Devices unclaimed after 60 days are subject
+to workshop disposal rules. Thank you for your trust.
+================================================

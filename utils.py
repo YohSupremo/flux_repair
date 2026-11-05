@@ -23,8 +23,8 @@ def valid_contact(value, label="Contact number"):
     if not re.match(r"^\+?[\d\s\-\(\)]{7,25}$", text):
         raise ValidationError(f"{label} must contain only numbers and valid symbols (+, -, ()).")
     digits = re.sub(r"\D", "", text)
-    if len(digits) < 7 or len(digits) > 15:
-        raise ValidationError(f"{label} must contain between 7 and 15 digits.")
+    if len(digits) < 7 or len(digits) > 11:
+        raise ValidationError(f"{label} must contain between 7 and 11 digits.")
     return text
 
 

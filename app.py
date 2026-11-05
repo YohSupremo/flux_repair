@@ -7,7 +7,8 @@ Palette: Modern Cleanroom Light & Surgical Emerald
 import tkinter as tk
 from tkinter import ttk, messagebox
 import datetime
-import random
+from errors import RuleError, StorageError, ValidationError
+from logic.public_booking import submit_public_booking
 
 # ================= MODERN CLEANROOM LIGHT TOKENS =================
 BG = "#f8fafc"           # Crisp titanium off-white canvas
@@ -874,11 +875,11 @@ class CircuitCareLandingApp(tk.Tk):
         for child in self.form_panel.winfo_children():
             child.destroy()
 
-        tk.Label(self.form_panel, text="Book a Free Diagnosis", font=FONT_H2, fg=AMBER, bg="#f8fafc").pack(anchor="w")
-        tk.Label(self.form_panel, text="Describe your device and issue. We confirm within 4 business hours.", font=FONT_BASE, fg=MUTED, bg="#f8fafc").pack(anchor="w", pady=(2, 14))
+        tk.Label(self.form_panel, text="Request a Free Diagnostic Slot", font=FONT_H2, fg=AMBER, bg="#f8fafc").pack(anchor="w")
+        tk.Label(self.form_panel, text="Direct online slot request. Confirmed within 4 business hours.", font=FONT_BASE, fg=MUTED, bg="#f8fafc").pack(anchor="w", pady=(2, 14))
 
         def f_input(parent, label_text):
-            tk.Label(parent, text=label_text, font=FONT_BOLD, fg=INK, bg="#f8fafc").pack(anchor="w", pady=(6, 2))
+            tk.Label(parent, text=label_text, font=FONT_BOLD, fg=INK, bg="#f8fafc", anchor="w").pack(fill="x", pady=(6, 2))
             e = tk.Entry(
                 parent,
                 bg="#ffffff",
@@ -890,15 +891,15 @@ class CircuitCareLandingApp(tk.Tk):
                 highlightbackground=LINE_BRIGHT,
                 highlightcolor=AMBER
             )
-            e.pack(fill="x", ipady=6)
+            e.pack(fill="x", ipady=6, pady=(0, 2))
             e.bind("<Return>", lambda ev: self._handle_book_submit())
             return e
 
-        self.book_name = f_input(self.form_panel, "Your Name")
-        self.book_contact = f_input(self.form_panel, "Email or Phone Number")
-        self.book_device = f_input(self.form_panel, "Device Model & Issue Description")
+        self.book_name = f_input(self.form_panel, "Your Full Name *")
+        self.book_contact = f_input(self.form_panel, "Email or Contact Number *")
+        self.book_device = f_input(self.form_panel, "Device Model and Issue Description *")
 
-        tk.Label(self.form_panel, text="Service Category", font=FONT_BOLD, fg=INK, bg="#f8fafc").pack(anchor="w", pady=(8, 2))
+        tk.Label(self.form_panel, text="Select Primary Service Category", font=FONT_BOLD, fg=INK, bg="#f8fafc", anchor="w").pack(fill="x", pady=(8, 2))
         self.book_svc_var = tk.StringVar(value="Board-Level Micro-Soldering")
         svc_opts = [s["title"] for s in SERVICES_DATA] + ["Not sure — diagnose it"]
         self.book_cb = ttk.Combobox(
@@ -918,7 +919,7 @@ class CircuitCareLandingApp(tk.Tk):
 
         self.submit_btn = tk.Button(
             self.form_panel,
-            text="Request Diagnosis Appointment",
+            text="Submit Diagnostic Booking ->",
             font=FONT_BTN,
             bg=AMBER,
             fg="#ffffff",
@@ -944,14 +945,18 @@ class CircuitCareLandingApp(tk.Tk):
             messagebox.showwarning("Incomplete Form", "Please fill in your Name, Contact, and Device fields.")
             return
 
-        tk_id = f"#FL-{random.randint(4900, 4999)}"
         svc = self.book_svc_var.get()
+        try:
+            job_id = submit_public_booking(name, contact, device, svc)
+        except (ValidationError, RuleError, StorageError) as exc:
+            messagebox.showerror("Booking Not Submitted", str(exc))
+            return
 
         for child in self.form_panel.winfo_children():
             child.destroy()
 
         tk.Label(self.form_panel, text="Diagnosis Request Received", font=FONT_BOLD, fg=GREEN, bg="#f8fafc").pack(anchor="w", pady=(10, 4))
-        tk.Label(self.form_panel, text=tk_id, font=("Segoe UI", 32, "bold"), fg=AMBER, bg="#f8fafc").pack(anchor="w")
+        tk.Label(self.form_panel, text=job_id, font=("Segoe UI", 32, "bold"), fg=AMBER, bg="#f8fafc").pack(anchor="w")
         tk.Label(self.form_panel, text=f"{device} — {svc}", font=FONT_H3, fg=INK, bg="#f8fafc").pack(anchor="w", pady=(4, 12))
         tk.Label(self.form_panel, text="We will confirm your appointment slot within 4 business hours.\nPlease bring the power charger if available.", font=FONT_BASE, fg=MUTED, bg="#f8fafc", justify="left").pack(anchor="w", pady=(0, 20))
 

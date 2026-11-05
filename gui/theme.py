@@ -106,6 +106,15 @@ def apply_theme(root):
         relief="flat",
         width=10
     )
+    style.configure(
+        "Horizontal.TScrollbar",
+        background=LINE,
+        troughcolor=BG_PANEL,
+        bordercolor=BG_PANEL,
+        arrowcolor=MUTED,
+        relief="flat",
+        width=10
+    )
 
     # Combobox
     style.configure(

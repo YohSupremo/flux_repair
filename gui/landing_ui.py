@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-import random
+from errors import RuleError, StorageError, ValidationError
+from logic.public_booking import submit_public_booking
 from gui.theme import (
     BG, BG_PANEL, BG_HOVER, BG_INPUT, LINE, LINE_BRIGHT, INK, MUTED, DIM,
     EMERALD, EMERALD_HOVER, EMERALD_LIGHT,
@@ -722,7 +723,7 @@ class LandingPageView(tk.Frame):
         tk.Label(self.form_panel, text="Direct online slot request. Confirmed within 4 business hours.", font=FONT_SMALL, fg=MUTED, bg="#f8fafc").pack(anchor="w", pady=(0, 10))
 
         def f_input(parent, label_text, prefill=""):
-            tk.Label(parent, text=label_text, font=FONT_SMALL_BOLD, fg=MUTED, bg="#f8fafc").pack(anchor="w", pady=(4, 2))
+            tk.Label(parent, text=label_text, font=FONT_SMALL_BOLD, fg=MUTED, bg="#f8fafc", anchor="w").pack(fill="x", pady=(4, 2))
             e = tk.Entry(
                 parent,
                 font=FONT_BODY,
@@ -733,7 +734,7 @@ class LandingPageView(tk.Frame):
                 highlightbackground=LINE_BRIGHT,
                 highlightcolor=EMERALD
             )
-            e.pack(fill="x", ipady=4)
+            e.pack(fill="x", ipady=4, pady=(0, 2))
             if prefill:
                 e.insert(0, prefill)
             return e
@@ -743,7 +744,7 @@ class LandingPageView(tk.Frame):
         self.book_contact = f_input(self.form_panel, "Email or Contact Number *")
         self.book_device = f_input(self.form_panel, "Device Model and Issue Description *")
 
-        tk.Label(self.form_panel, text="Select Primary Service Category", font=FONT_SMALL_BOLD, fg=MUTED, bg="#f8fafc").pack(anchor="w", pady=(6, 2))
+        tk.Label(self.form_panel, text="Select Primary Service Category", font=FONT_SMALL_BOLD, fg=MUTED, bg="#f8fafc", anchor="w").pack(fill="x", pady=(6, 2))
         self.book_svc_var = tk.StringVar(value="Board-Level Micro-Soldering")
         svc_opts = [s["title"] for s in SERVICES_DATA] + ["Not sure: diagnose at workshop"]
         self.book_cb = ttk.Combobox(
@@ -783,14 +784,18 @@ class LandingPageView(tk.Frame):
             messagebox.showwarning("Notice", "Please fill in Name, Contact, and Device fields.")
             return
 
-        tk_id = f"#FL-{random.randint(4900, 4999)}"
         svc = self.book_svc_var.get()
+        try:
+            job_id = submit_public_booking(name, contact, device, svc)
+        except (ValidationError, RuleError, StorageError) as exc:
+            messagebox.showerror("Booking Not Submitted", str(exc))
+            return
 
         for child in self.form_panel.winfo_children():
             child.destroy()
 
         tk.Label(self.form_panel, text="Diagnosis Request Confirmed", font=FONT_HEADING, fg=EMERALD, bg="#f8fafc").pack(anchor="w", pady=(8, 2))
-        tk.Label(self.form_panel, text=tk_id, font=("Segoe UI", 24, "bold"), fg=EMERALD, bg="#f8fafc").pack(anchor="w")
+        tk.Label(self.form_panel, text=job_id, font=("Segoe UI", 24, "bold"), fg=EMERALD, bg="#f8fafc").pack(anchor="w")
         tk.Label(self.form_panel, text=f"{device} : {svc}", font=FONT_BODY_BOLD, fg=INK, bg="#f8fafc").pack(anchor="w", pady=(2, 8))
         tk.Label(self.form_panel, text="We will confirm your appointment slot within 4 business hours.\nPlease bring the power charger if available.", font=FONT_BODY, fg=MUTED, bg="#f8fafc", justify="left").pack(anchor="w", pady=(0, 16))
 

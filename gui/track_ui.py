@@ -9,6 +9,7 @@ from gui.theme import (
 from gui.widgets import primary_button, secondary_button
 from logic.jobs import list_jobs, job_details, find_job
 from gui.job_details_ui import JobDetailsModal
+from utils import money
 
 
 class TrackRepairView(tk.Frame):
@@ -438,8 +439,20 @@ class TrackRepairView(tk.Frame):
         bill = details.get('bill') or {}
         _data_row(right_col, "Service Priority:", job.get('priority', 'Standard'))
         _data_row(right_col, "Assigned Tech:", details.get('technician', {}).get('full_name') if details.get('technician') else "Bench Pool")
-        _data_row(right_col, "Repair Total:", f"${bill.get('total_amount', '0.00')}")
-        _data_row(right_col, "Payment Status:", "PAID IN FULL" if bill.get('is_paid') else f"Balance: ${bill.get('balance_due', '0.00')}")
+        total = bill.get('total', 0)
+        balance = bill.get('balance', 0)
+        paid = bill.get('paid', 0)
+        if total == 0:
+            payment_status = "Pending Diagnosis Quote"
+        elif balance == 0:
+            payment_status = f"Paid in Full ({money(balance)} due)"
+        elif paid > 0:
+            payment_status = f"Partial ({money(balance)} due)"
+        else:
+            payment_status = f"Unpaid ({money(balance)} due)"
+
+        _data_row(right_col, "Repair Total:", money(total))
+        _data_row(right_col, "Payment Status:", payment_status)
 
         # Diagnosis Description
         if job.get('fault_details'):

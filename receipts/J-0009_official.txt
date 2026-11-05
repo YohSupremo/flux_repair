@@ -1,0 +1,32 @@
+====================================================
+             FLUX REPAIR CO. ATELIER
+           OFFICIAL REPAIR INVOICE
+      118 Beacon Works, Unit 3 • (555) 019-3350
+====================================================
+JOB ORDER: J-0009             DATE: 2026-11-05 17:18
+----------------------------------------------------
+CUSTOMER: Kell Roduta
+CONTACT:  09213213213
+DEVICE:   Laptop (adas asdas)
+SERIAL:   asda
+====================================================
+ITEMIZED SERVICES & LABOR                     AMOUNT
+----------------------------------------------------
+  Diagnostic                                    ₱0.00
+  OS Reinstallation                           ₱500.00
+----------------------------------------------------
+SUBTOTAL (SERVICES):                         ₱500.00
+====================================================
+TOTAL REPAIR CHARGES:                        ₱500.00
+PAYMENTS RECEIVED:                           ₱500.00
+----------------------------------------------------
+OUTSTANDING BALANCE:                           ₱0.00
+====================================================
+PAYMENT HISTORY:
+  [2026-11-05 17:18] Card                     ₱500.00
+----------------------------------------------------
+WARRANTY & TERMS:
+• 90-Day parts and workmanship warranty on replaced ICs.
+• Physical impact and liquid re-ingress void warranty.
+• Thank you for supporting honest component repair!
+====================================================

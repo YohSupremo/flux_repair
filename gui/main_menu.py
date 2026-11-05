@@ -131,7 +131,7 @@ class CustomerProfilePopup(tk.Toplevel):
             except Exception:
                 pass
 
-        self.bind_all("<Button-1>", _on_click, add="+")
+        self.after_idle(lambda: self.bind_all("<Button-1>", _on_click, add="+"))
 
     def destroy(self):
         try:
@@ -139,6 +139,138 @@ class CustomerProfilePopup(tk.Toplevel):
         except Exception:
             pass
         super().destroy()
+
+
+class StaffWebsiteWindow(tk.Toplevel):
+    """Customer-style website view for Admin, Staff, and Technician users."""
+    def __init__(self, parent, current_user, on_return_to_panel, on_logout):
+        super().__init__(parent)
+        self.current_user = current_user
+        self.on_return_to_panel = on_return_to_panel
+        self.on_logout = on_logout
+        self._active_profile_popup = None
+
+        self.title("FLUX Repair Co. - Website")
+        self.configure(bg=BG)
+        self.geometry("1180x760")
+        self.minsize(900, 600)
+
+        self._build_ui()
+
+    def _build_ui(self):
+        self.top_nav = tk.Frame(
+            self, bg=SIDEBAR_BG, bd=0, highlightthickness=1,
+            highlightbackground="#1e293b"
+        )
+        self.top_nav.pack(side="top", fill="x")
+
+        nav_inner = tk.Frame(self.top_nav, bg=SIDEBAR_BG, padx=32, pady=12)
+        nav_inner.pack(fill="x")
+
+        brand = tk.Frame(nav_inner, bg=SIDEBAR_BG, cursor="hand2")
+        brand.pack(side="left")
+        brand_title = tk.Frame(brand, bg=SIDEBAR_BG)
+        brand_title.pack(anchor="w")
+        tk.Label(
+            brand_title, text="FLUX", font=("Segoe UI", 16, "bold"),
+            fg=SIDEBAR_INK, bg=SIDEBAR_BG
+        ).pack(side="left")
+        tk.Label(
+            brand_title, text=" REPAIR CO.", font=("Segoe UI", 10, "bold"),
+            fg=SIDEBAR_ACTIVE, bg=SIDEBAR_BG
+        ).pack(side="left", pady=(2, 0))
+        tk.Label(
+            brand, text="Public Website", font=FONT_SMALL,
+            fg=SIDEBAR_MUTED, bg=SIDEBAR_BG
+        ).pack(anchor="w", pady=(1, 0))
+
+        nav = tk.Frame(nav_inner, bg=SIDEBAR_BG)
+        nav.pack(side="left", padx=(30, 0), fill="x", expand=True)
+        for key, label in (
+            ("dashboard", "Home"),
+            ("services", "Services"),
+            ("faq", "FAQ & Warranty"),
+            ("about", "About Us"),
+        ):
+            tk.Button(
+                nav, text=label, font=FONT_BODY, bg=SIDEBAR_BG,
+                fg=SIDEBAR_MUTED, activebackground=SIDEBAR_HOVER,
+                activeforeground=SIDEBAR_INK, bd=0, cursor="hand2",
+                padx=10, pady=6,
+                command=lambda view_key=key: self._show_website_view(view_key)
+            ).pack(side="left", padx=4)
+
+        right = tk.Frame(nav_inner, bg=SIDEBAR_BG)
+        right.pack(side="right")
+        self.profile_btn = tk.Frame(
+            right, bg="#1e293b", padx=10, pady=5, cursor="hand2",
+            bd=0, highlightthickness=1, highlightbackground="#334155"
+        )
+        self.profile_btn.pack(side="left")
+        name_label = tk.Label(
+            self.profile_btn, text=self.current_user.get("full_name", "User"),
+            font=FONT_SMALL_BOLD, fg=SIDEBAR_INK, bg="#1e293b",
+            cursor="hand2"
+        )
+        name_label.pack(side="left", padx=8)
+        chevron_label = tk.Label(
+            self.profile_btn, text="v", font=("Segoe UI", 8, "bold"),
+            fg=EMERALD, bg="#1e293b", cursor="hand2"
+        )
+        chevron_label.pack(side="left", padx=4)
+
+        for widget in (self.profile_btn, name_label, chevron_label):
+            widget.bind("<Button-1>", lambda e: self._popup_profile_menu())
+
+        self.profile_btn.lift()
+
+        self.view_host = tk.Frame(self, bg=BG)
+        self.view_host.pack(fill="both", expand=True)
+        self._show_website_view("dashboard")
+
+    def _show_website_view(self, view_key):
+        for child in self.view_host.winfo_children():
+            child.destroy()
+        if view_key == "dashboard":
+            view = LandingPageView(
+                self.view_host,
+                current_user=self.current_user,
+                on_open_intake_callback=None,
+                on_navigate_callback=self._show_website_view
+            )
+        elif view_key == "services":
+            view = CatalogView(self.view_host, self.current_user)
+        elif view_key == "faq":
+            view = FAQWarrantyView(self.view_host, self.current_user)
+        else:
+            view = AboutUsView(self.view_host, self.current_user)
+        view.pack(fill="both", expand=True)
+
+    def _popup_profile_menu(self):
+        if self._active_profile_popup and self._active_profile_popup.winfo_exists():
+            self._active_profile_popup.destroy()
+        role_name = self.current_user.get("role", "User")
+        callbacks = [
+            (f"Return to {role_name} Panel", f"Open your {role_name.lower()} workbench", self._return_to_panel),
+            ("Account Settings", "Update profile details and password", self._open_settings),
+            None,
+            ("Sign Out", "End your session", self._sign_out),
+        ]
+        self._active_profile_popup = CustomerProfilePopup(
+            self, self.current_user, callbacks, self.profile_btn
+        )
+
+    def _open_settings(self):
+        AccountSettingsModal(self, self.current_user)
+
+    def _return_to_panel(self):
+        self.destroy()
+        self.on_return_to_panel()
+
+    def _sign_out(self):
+        self.destroy()
+        self.on_return_to_panel()
+        self.on_logout()
 
 
 class MainMenuView(tk.Frame):
@@ -322,12 +454,10 @@ class MainMenuView(tk.Frame):
 
             menu_items = [
                 ("dashboard", "Dashboard", True),
-                ("website", "Website", True),
                 ("jobs", "Job Orders", True),
                 ("track", "Track Repair", True),
                 ("customers", "Customers", role in ('Admin', 'Staff')),
                 ("catalog", "Service Catalog", True),
-                ("faq", "FAQ & Warranty", True),
                 ("parts", "Parts Inventory", role in ('Admin', 'Staff', 'Technician')),
                 ("reports", "Reports & Sales", role in ('Admin', 'Staff')),
                 ("users", "User Accounts", role == 'Admin'),
@@ -380,6 +510,22 @@ class MainMenuView(tk.Frame):
                 pady=5
             )
             settings_btn.pack(fill="x", pady=(0, 6))
+
+            website_btn = tk.Button(
+                bot_box,
+                text="Open Website",
+                command=self._open_website_window,
+                font=FONT_SMALL,
+                bg="#1e293b",
+                fg=SIDEBAR_INK,
+                activebackground=SIDEBAR_HOVER,
+                activeforeground=EMERALD,
+                bd=0,
+                cursor="hand2",
+                padx=12,
+                pady=5
+            )
+            website_btn.pack(fill="x", pady=(0, 6))
 
             logout_btn = tk.Button(
                 bot_box,
@@ -506,7 +652,18 @@ class MainMenuView(tk.Frame):
         AccountSettingsModal(
             self.winfo_toplevel(),
             self.current_user,
-            on_profile_updated_callback=self._on_profile_updated
+            on_profile_updated_callback=self._on_profile_updated,
+            on_account_deactivated_callback=self.on_logout_callback
+        )
+
+    def _open_website_window(self):
+        root = self.winfo_toplevel()
+        root.withdraw()
+        StaffWebsiteWindow(
+            root,
+            self.current_user,
+            on_return_to_panel=root.deiconify,
+            on_logout=lambda: self.on_logout_callback()
         )
 
     def _on_profile_updated(self, updated_user):

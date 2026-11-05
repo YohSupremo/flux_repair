@@ -1,5 +1,7 @@
 TABLES = {
     'users': ['user_id', 'username', 'password', 'role', 'full_name'],
+    'account_status': ['user_id', 'status'],
+    'profiles': ['user_id', 'contact_no', 'email', 'address'],
     'customers': ['customer_id', 'name', 'contact_no', 'email', 'address'],
     'services': ['service_id', 'name', 'description', 'price'],
     'parts': ['part_id', 'name', 'quantity', 'unit_price', 'low_stock_threshold'],

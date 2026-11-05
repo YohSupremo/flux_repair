@@ -140,29 +140,44 @@ def status_badge(parent, status):
     return lbl
 
 
-def make_table(parent, columns, headings, widths=None):
+def make_table(parent, columns, headings, widths=None, horizontal=False):
     """
-    Create a modern flat Treeview table with vertical scrollbar (FR-59).
+    Create a modern flat Treeview table with vertical/horizontal scrollbars (FR-59).
     Returns (container_frame, treeview).
     """
     frame = tk.Frame(parent, bg=BG_PANEL, bd=0, highlightthickness=1, highlightbackground=LINE)
 
+    body = tk.Frame(frame, bg=BG_PANEL)
+
     tree = ttk.Treeview(
-        frame,
+        body,
         columns=columns,
         show="headings",
         selectmode="browse",
         style="Treeview"
     )
 
-    vsb = ttk.Scrollbar(frame, orient="vertical", command=tree.yview, style="Vertical.TScrollbar")
+    vsb = ttk.Scrollbar(body, orient="vertical", command=tree.yview, style="Vertical.TScrollbar")
     tree.configure(yscrollcommand=vsb.set)
+
+    if horizontal:
+        hsb = ttk.Scrollbar(frame, orient="horizontal", command=tree.xview, style="Horizontal.TScrollbar")
+        tree.configure(xscrollcommand=hsb.set)
+        hsb.pack(side="bottom", fill="x")
+
+    body.pack(side="top", fill="both", expand=True)
 
     for i, col in enumerate(columns):
         head = headings[i] if i < len(headings) else col
         w = widths[i] if (widths and i < len(widths)) else 100
         tree.heading(col, text=head, anchor="w")
-        tree.column(col, width=w, minwidth=max(40, int(w * 0.7)), anchor="w")
+        tree.column(
+            col,
+            width=w,
+            minwidth=max(40, int(w * 0.7)),
+            anchor="w",
+            stretch=not horizontal
+        )
 
     tree.pack(side="left", fill="both", expand=True)
     vsb.pack(side="right", fill="y")

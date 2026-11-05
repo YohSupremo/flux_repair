@@ -1,0 +1,25 @@
+================================================
+           FLUX REPAIR CO. ATELIER
+       SURGICAL ELECTRONICS DIAGNOSTICS
+================================================
+JOB TICKET: J-0008        DATE: 2026-11-05 16:36
+------------------------------------------------
+CUSTOMER: Kelly Laurenc
+CONTACT:  0917-123-4567
+------------------------------------------------
+DEVICE:    Laptop - Not specified asd
+SERIAL NO: ONLINE-C-002
+CONDITION: To be inspected
+PRIORITY:  Normal
+------------------------------------------------
+REPORTED ISSUE:
+  asd
+------------------------------------------------
+INITIAL SERVICES AT INTAKE:
+  • Diagnostic                              ₱0.00
+------------------------------------------------
+ESTIMATED TOTAL:                           ₱0.00
+================================================
+Notice: Devices unclaimed after 60 days are subject
+to workshop disposal rules. Thank you for your trust.
+================================================

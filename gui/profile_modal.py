@@ -8,7 +8,7 @@ from gui.theme import (
 )
 from gui.widgets import primary_button, secondary_button
 from logic.auth import (
-    get_user_profile, update_profile,
+    get_user_profile, update_profile, deactivate_account,
     split_full_name, compose_full_name, compose_address, parse_address
 )
 from errors import ValidationError, RuleError
@@ -24,10 +24,12 @@ class AccountSettingsModal(tk.Toplevel):
     - Tab 2: Security (Username, Email, Current/New Password)
     - Tab 3: Address (Chopped Street, Unit, City, State, Postal Code)
     """
-    def __init__(self, parent, current_user, on_profile_updated_callback=None):
+    def __init__(self, parent, current_user, on_profile_updated_callback=None,
+                 on_account_deactivated_callback=None):
         super().__init__(parent)
         self.current_user = current_user
         self.on_profile_updated_callback = on_profile_updated_callback
+        self.on_account_deactivated_callback = on_account_deactivated_callback
 
         self.title("Account Settings - FLUX Repair Co.")
         self.configure(bg=BG)
@@ -156,6 +158,15 @@ class AccountSettingsModal(tk.Toplevel):
         )
         btn_cancel.pack(side="right")
 
+        if self.current_user.get('role') == 'Customer':
+            secondary_button(
+                bot,
+                text="Deactivate Account",
+                command=self._deactivate_account,
+                padx=14,
+                pady=8
+            ).pack(side="left")
+
         # 4. Content View Area (Fills remaining middle space)
         self.content_container = tk.Frame(self, bg=BG, padx=28)
         self.content_container.pack(side="top", fill="both", expand=True, pady=(0, 10))
@@ -166,6 +177,26 @@ class AccountSettingsModal(tk.Toplevel):
 
         # Activate initial tab
         self._switch_tab("personal")
+
+    def _deactivate_account(self):
+        if not messagebox.askyesno(
+            "Deactivate Account",
+            "Deactivate your account? You will be signed out and cannot log in again until an Admin reactivates it.",
+            parent=self
+        ):
+            return
+        try:
+            deactivate_account(self.current_user['user_id'], self.current_user)
+            messagebox.showinfo(
+                "Account Deactivated",
+                "Your account has been deactivated and you will now be signed out.",
+                parent=self
+            )
+            self.destroy()
+            if self.on_account_deactivated_callback:
+                self.on_account_deactivated_callback()
+        except (ValidationError, RuleError) as err:
+            messagebox.showerror("Unable to Deactivate Account", str(err), parent=self)
 
     def _show_field_error(self, key, message):
         if key in self.field_errors:
@@ -201,9 +232,18 @@ class AccountSettingsModal(tk.Toplevel):
             if any(c.isalpha() for c in char):
                 self._show_field_error(key, "Contact number cannot contain letters.")
                 return False
+            if sum(c.isdigit() for c in proposed) > 11:
+                self._show_field_error(key, "Contact number cannot exceed 11 digits.")
+                return False
         return True
 
-    def _entry(self, parent, default_val="", is_readonly=False, is_password=False, is_phone=False, with_toggle=False, field_key=None):
+    def _on_postal_char_validate(self, key, action, proposed, char):
+        if action == '1' and (not char.isdigit() or len(proposed) > 4):
+            self._show_field_error(key, "Postal code must contain exactly 4 digits.")
+            return False
+        return True
+
+    def _entry(self, parent, default_val="", is_readonly=False, is_password=False, is_phone=False, is_postal=False, with_toggle=False, field_key=None):
         show_char = "*" if is_password else ""
         wrap = tk.Frame(parent, bg="#f1f5f9" if is_readonly else BG_INPUT, bd=0, highlightthickness=1, highlightbackground=LINE_BRIGHT)
         wrap.pack(fill="x")
@@ -211,6 +251,10 @@ class AccountSettingsModal(tk.Toplevel):
         extra_kwargs = {}
         if is_phone:
             vcmd = (self.register(lambda act, p, char: self._on_phone_char_validate(field_key or "contact", act, p, char)), '%d', '%P', '%S')
+            extra_kwargs["validate"] = "key"
+            extra_kwargs["validatecommand"] = vcmd
+        elif is_postal:
+            vcmd = (self.register(lambda act, p, char: self._on_postal_char_validate(field_key or "zip", act, p, char)), '%d', '%P', '%S')
             extra_kwargs["validate"] = "key"
             extra_kwargs["validatecommand"] = vcmd
 
@@ -244,7 +288,8 @@ class AccountSettingsModal(tk.Toplevel):
             self.field_errors[field_key] = tk.Label(parent, text="", font=("Segoe UI", 8), fg=RED, bg=BG_PANEL, anchor="w")
             ent.bind("<FocusIn>", lambda e, k=field_key, w=wrap: self._on_field_focus(k, w))
             ent.bind("<FocusOut>", lambda e, k=field_key, w=wrap: self._on_field_unfocus(k, w))
-            ent.bind("<KeyRelease>", lambda e, k=field_key: self._clear_field_error(k))
+            if field_key not in ("contact", "zip"):
+                ent.bind("<KeyRelease>", lambda e, k=field_key: self._clear_field_error(k))
         elif not is_readonly:
             ent.bind("<FocusIn>", lambda e, w=wrap: w.configure(highlightbackground=EMERALD, highlightcolor=EMERALD))
             ent.bind("<FocusOut>", lambda e, w=wrap: w.configure(highlightbackground=LINE_BRIGHT))
@@ -336,11 +381,11 @@ class AccountSettingsModal(tk.Toplevel):
 
         tk.Label(
             tip_box,
-            text="Username and registered email can both be used to sign in. Leave password fields blank if not changing your current password.",
+            text="Use your username or email to sign in. Leave password fields blank unless changing your password.",
             font=("Segoe UI", 8),
             fg=MUTED,
             bg=BG_HOVER,
-            wraplength=490,
+            wraplength=360,
             justify="left"
         ).pack(anchor="w", pady=(3, 0))
 
@@ -456,7 +501,7 @@ class AccountSettingsModal(tk.Toplevel):
         b_zip = tk.Frame(card, bg=BG_PANEL)
         b_zip.pack(fill="x", pady=(0, 4))
         tk.Label(b_zip, text="Postal code / ZIP *", font=FONT_SMALL_BOLD, fg=MUTED, bg=BG_PANEL).pack(anchor="w", pady=(0, 4))
-        self.zip_ent = self._entry(b_zip, self.addr_components.get('postal_code', ''), field_key="zip")
+        self.zip_ent = self._entry(b_zip, self.addr_components.get('postal_code', ''), is_postal=True, field_key="zip")
 
     def _switch_tab(self, tab_key):
         self.active_tab = tab_key
@@ -590,6 +635,11 @@ class AccountSettingsModal(tk.Toplevel):
         if not zip_code:
             self._switch_tab("address")
             self._show_field_error("zip", "Postal code / ZIP is required.")
+            self.zip_ent.focus_set()
+            return
+        if not zip_code.isdigit() or len(zip_code) != 4:
+            self._switch_tab("address")
+            self._show_field_error("zip", "Postal code must contain exactly 4 digits.")
             self.zip_ent.focus_set()
             return
 
